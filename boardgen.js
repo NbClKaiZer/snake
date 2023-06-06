@@ -45,20 +45,20 @@ let direction = "left";
     grid.lineTo(640, i);
 }*/
 
-grid.rect(0, 0, 640, 640);
+grid.rect(0, 0, 642, 642);
 grid.stroke();
 
 snake.fillStyle = "black";
 
 for (let j=0; j<=3; j++) {
-    x = 320 + j * 20;
-    y = 320;
+    x = 321 + j * 20;
+    y = 321;
     snake.fillRect(x, y, 20, 20);
     snakeTiles.push({x: x, y: y});
 }
 
-x = Math.floor(Math.random()*32)*20;
-y = Math.floor(Math.random()*32)*20;
+x = Math.floor(Math.random()*32)*20+1;
+y = Math.floor(Math.random()*32)*20+1;
 
 apple.fillStyle = "green";
 apple.fillRect(x, y, 20, 20);
@@ -97,12 +97,24 @@ function moveSnake() {
 
     if (direction == "left") {
         x = x-20;
+        if (x == -19) {
+            x = 621;
+        }
     } else if (direction == "right") {
         x = x+20;
+        if (x == 641) {
+            x = 1;
+        }
     } else if (direction == "up") {
         y = y-20;
+        if (y == -19) {
+            y = 621;
+        }
     } else if (direction == "down") {
         y = y+20;
+        if (y == 641) {
+            y = 1;
+        }
     }
 
     snake.fillStyle = "black";
