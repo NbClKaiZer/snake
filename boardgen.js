@@ -51,5 +51,5 @@ snake.fillRect(380, 320, 20, 20);
 let x = Math.floor(Math.random()*32)*20;
 let y = Math.floor(Math.random()*32)*20;
 
-snake.fillStyle = "green";
-snake.fillRect(x, y, 20, 20);
+apple.fillStyle = "green";
+apple.fillRect(x, y, 20, 20);
