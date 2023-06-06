@@ -36,14 +36,16 @@ let snakeTiles = [];
 let appleTiles = [];
 let x;
 let y;
+let direction = "left";
 
-for (let i=0; i<=640; i+=20) {
+/*for (let i=0; i<=640; i+=20) {
     grid.moveTo(i, 0);
     grid.lineTo(i, 640);
     grid.moveTo(0, i);
     grid.lineTo(640, i);
-}
+}*/
 
+grid.rect(0, 0, 640, 640);
 grid.stroke();
 
 snake.fillStyle = "black";
@@ -63,3 +65,49 @@ apple.fillRect(x, y, 20, 20);
 appleTiles.push({x: x, y: y});
 
 console.log(snakeTiles, appleTiles);
+
+document.onkeydown = (e) => {
+    switch (e.key) {
+        case "ArrowLeft":
+            direction = "left";
+            break;
+        case "ArrowRight":
+            direction = "right";
+            break;
+        case "ArrowUp":
+            direction = "up";
+            break;
+        case "ArrowDown":
+            direction = "down";
+            break;
+    }
+    console.log(e, direction);
+}
+
+console.log(snakeTiles[snakeTiles.length - 1].x, snakeTiles[snakeTiles.length - 1].y);
+
+function moveSnake() {
+    x = snakeTiles[snakeTiles.length - 1].x;
+    y = snakeTiles[snakeTiles.length - 1].y;
+    snake.clearRect(x, y, 20, 20);
+    snakeTiles.pop();
+
+    x = snakeTiles[0].x;
+    y = snakeTiles[0].y;
+
+    if (direction == "left") {
+        x = x-20;
+    } else if (direction == "right") {
+        x = x+20;
+    } else if (direction == "up") {
+        y = y-20;
+    } else if (direction == "down") {
+        y = y+20;
+    }
+
+    snake.fillStyle = "black";
+    snake.fillRect(x, y, 20, 20);
+    snakeTiles.unshift({x: x, y: y});
+}
+
+setInterval(moveSnake, 200);
