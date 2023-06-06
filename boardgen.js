@@ -30,26 +30,12 @@ ctx.stroke();*/
 
 const c = document.querySelector("#board");
 let ctx = c.getContext("2d");
-const boardWidth = c.width;
-const boardHeight = c.height;
-const plotSize = 20;
-const columns = boardWidth / plotSize;
-const rows = boardHeight / plotSize;
 
-for (let i=0; i<=columns; i++) {
-    let x=i*plotSize;
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, boardHeight);
-    ctx.closePath();
-    ctx.stroke();
+for (let i=0; i<=640; i+=20) {
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i, 640);
+    ctx.moveTo(0, i);
+    ctx.lineTo(640, i);
 }
 
-for (let j=0; j<=rows; j++) {
-    let y=j*plotSize;
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(boardWidth, y);
-    ctx.closePath();
-    ctx.stroke();
-}
+ctx.stroke();
