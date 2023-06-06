@@ -57,34 +57,31 @@ for (let j=0; j<=3; j++) {
     snakeTiles.push({x: x, y: y});
 }
 
-x = Math.floor(Math.random()*32)*20+1;
-y = Math.floor(Math.random()*32)*20+1;
-
-apple.fillStyle = "green";
-apple.fillRect(x, y, 20, 20);
-appleTiles.push({x: x, y: y});
-
-console.log(snakeTiles, appleTiles);
-
 document.onkeydown = (e) => {
     switch (e.key) {
         case "ArrowLeft":
-            direction = "left";
+            if(direction != "right") {
+                direction = "left";
+            }
             break;
         case "ArrowRight":
-            direction = "right";
+            if(direction != "left") {
+                direction = "right";
+            }
             break;
         case "ArrowUp":
-            direction = "up";
+            if(direction != "down") {
+                direction = "up";
+            }
             break;
         case "ArrowDown":
-            direction = "down";
+            if(direction != "up") {
+                direction = "down";
+            }
             break;
     }
     console.log(e, direction);
 }
-
-console.log(snakeTiles[snakeTiles.length - 1].x, snakeTiles[snakeTiles.length - 1].y);
 
 function moveSnake() {
     x = snakeTiles[snakeTiles.length - 1].x;
@@ -123,3 +120,15 @@ function moveSnake() {
 }
 
 setInterval(moveSnake, 200);
+
+function spawnApple() {
+    x = Math.floor(Math.random()*32)*20+1;
+    y = Math.floor(Math.random()*32)*20+1;
+    
+    apple.fillStyle = "green";
+    apple.fillRect(x, y, 20, 20);
+    appleTiles.push({x: x, y: y});
+}
+
+spawnApple();
+setInterval(spawnApple, 7000);
