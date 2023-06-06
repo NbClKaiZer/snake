@@ -38,6 +38,7 @@ let x;
 let y;
 let direction = "left";
 
+//debug grid generation
 /*for (let i=0; i<=640; i+=20) {
     grid.moveTo(i, 0);
     grid.lineTo(i, 640);
@@ -45,9 +46,12 @@ let direction = "left";
     grid.lineTo(640, i);
 }*/
 
+//board outer border
 grid.rect(0, 0, 642, 642);
 grid.stroke();
 
+
+//initial snake figure generation
 snake.fillStyle = "black";
 
 for (let j=0; j<=3; j++) {
@@ -57,30 +61,34 @@ for (let j=0; j<=3; j++) {
     snakeTiles.push({x: x, y: y});
 }
 
+//basic controls
 document.onkeydown = (e) => {
     switch (e.key) {
         case "ArrowLeft":
+        case "a":
             if(direction != "right") {
                 direction = "left";
             }
             break;
         case "ArrowRight":
+        case "d":
             if(direction != "left") {
                 direction = "right";
             }
             break;
         case "ArrowUp":
+        case "w":
             if(direction != "down") {
                 direction = "up";
             }
             break;
         case "ArrowDown":
+        case "s":
             if(direction != "up") {
                 direction = "down";
             }
             break;
     }
-    console.log(e, direction);
 }
 
 function moveSnake() {
