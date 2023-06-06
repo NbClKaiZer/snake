@@ -32,6 +32,10 @@ const board = document.querySelector("#board");
 let grid = board.getContext("2d");
 let snake = board.getContext("2d");
 let apple = board.getContext("2d");
+let snakeTiles = [];
+let appleTiles = [];
+let x;
+let y;
 
 for (let i=0; i<=640; i+=20) {
     grid.moveTo(i, 0);
@@ -43,13 +47,19 @@ for (let i=0; i<=640; i+=20) {
 grid.stroke();
 
 snake.fillStyle = "black";
-snake.fillRect(320, 320, 20, 20);
-snake.fillRect(340, 320, 20, 20);
-snake.fillRect(360, 320, 20, 20);
-snake.fillRect(380, 320, 20, 20);
 
-let x = Math.floor(Math.random()*32)*20;
-let y = Math.floor(Math.random()*32)*20;
+for (let j=0; j<=3; j++) {
+    x = 320 + j * 20;
+    y = 320;
+    snake.fillRect(x, y, 20, 20);
+    snakeTiles.push({x: x, y: y});
+}
+
+x = Math.floor(Math.random()*32)*20;
+y = Math.floor(Math.random()*32)*20;
 
 apple.fillStyle = "green";
 apple.fillRect(x, y, 20, 20);
+appleTiles.push({x: x, y: y});
+
+console.log(snakeTiles, appleTiles);
