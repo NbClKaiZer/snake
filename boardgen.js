@@ -37,6 +37,7 @@ let appleTiles = [];
 let x;
 let y;
 let direction = "left";
+let lastMove = "left";
 
 //debug grid generation
 /*for (let i=0; i<=640; i+=20) {
@@ -66,25 +67,25 @@ document.onkeydown = (e) => {
     switch (e.key) {
         case "ArrowLeft":
         case "a":
-            if(direction != "right") {
+            if(lastMove != "right") {
                 direction = "left";
             }
             break;
         case "ArrowRight":
         case "d":
-            if(direction != "left") {
+            if(lastMove != "left") {
                 direction = "right";
             }
             break;
         case "ArrowUp":
         case "w":
-            if(direction != "down") {
+            if(lastMove != "down") {
                 direction = "up";
             }
             break;
         case "ArrowDown":
         case "s":
-            if(direction != "up") {
+            if(lastMove != "up") {
                 direction = "down";
             }
             break;
@@ -101,21 +102,25 @@ function moveSnake() {
     y = snakeTiles[0].y;
 
     if (direction == "left") {
+        lastMove = "left";
         x = x-20;
         if (x == -19) {
             x = 621;
         }
     } else if (direction == "right") {
+        lastMove = "right";
         x = x+20;
         if (x == 641) {
             x = 1;
         }
     } else if (direction == "up") {
+        lastMove = "up";
         y = y-20;
         if (y == -19) {
             y = 621;
         }
     } else if (direction == "down") {
+        lastMove = "down";
         y = y+20;
         if (y == 641) {
             y = 1;
