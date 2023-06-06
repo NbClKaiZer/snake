@@ -12,3 +12,5 @@ add collision detection
 add snake growth
 7th iteration:
 reset condition*/
+
+console.log("Hallo Penis!")
