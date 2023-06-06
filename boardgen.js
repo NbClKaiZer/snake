@@ -28,14 +28,28 @@ ctx.stroke();
 ctx.rect(10, 10, 150, 100);
 ctx.stroke();*/
 
-const c = document.querySelector("#board");
-let ctx = c.getContext("2d");
+const board = document.querySelector("#board");
+let grid = board.getContext("2d");
+let snake = board.getContext("2d");
+let apple = board.getContext("2d");
 
 for (let i=0; i<=640; i+=20) {
-    ctx.moveTo(i, 0);
-    ctx.lineTo(i, 640);
-    ctx.moveTo(0, i);
-    ctx.lineTo(640, i);
+    grid.moveTo(i, 0);
+    grid.lineTo(i, 640);
+    grid.moveTo(0, i);
+    grid.lineTo(640, i);
 }
 
-ctx.stroke();
+grid.stroke();
+
+snake.fillStyle = "black";
+snake.fillRect(320, 320, 20, 20);
+snake.fillRect(340, 320, 20, 20);
+snake.fillRect(360, 320, 20, 20);
+snake.fillRect(380, 320, 20, 20);
+
+let x = Math.floor(Math.random()*32)*20;
+let y = Math.floor(Math.random()*32)*20;
+
+snake.fillStyle = "green";
+snake.fillRect(x, y, 20, 20);
