@@ -38,11 +38,11 @@ let x;
 let y;
 let direction = "left";
 
-/*for (let i=0; i<=640; i+=20) {
+/*for (let i=1; i<=641; i+=20) {
     grid.moveTo(i, 0);
-    grid.lineTo(i, 640);
+    grid.lineTo(i, 641);
     grid.moveTo(0, i);
-    grid.lineTo(640, i);
+    grid.lineTo(641, i);
 }*/
 
 grid.rect(0, 0, 642, 642);
