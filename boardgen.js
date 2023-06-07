@@ -20,6 +20,7 @@ let snakeInt;
 let appleInt;
 let mineInt;
 let demineInt;
+let difficulty = 1;
 
 //Debug-Grid generator
 /*for (let i=1; i<=641; i+=20) {
@@ -60,11 +61,21 @@ function startGame() {
     }
     
     //initialize movement and item spawns
-    snakeInt = setInterval(moveSnake, 150);
+    if (difficulty == 0) {
+        snakeInt = setInterval(moveSnake, 250);
+        appleInt = setInterval(spawnApple, 7000);
+    } else if (difficulty == 1) {
+        snakeInt = setInterval(moveSnake, 150);
+        appleInt = setInterval(spawnApple, 5000);
+        mineInt = setInterval(spawnMine, 8000);
+        demineInt = setInterval(despawnMine, 15000);
+    } else if  (difficulty == 2) {
+        snakeInt = setInterval(moveSnake, 75);
+        appleInt = setInterval(spawnApple, 3000);
+        mineInt = setInterval(spawnMine, 3000);
+        demineInt = setInterval(despawnMine, 15000);
+    }
     spawnApple();
-    appleInt = setInterval(spawnApple, 5000);
-    mineInt = setInterval(spawnMine, 10000);
-    demineInt = setInterval(despawnMine, 14000);
 }
 
 //basic controls w,a,s,d and arrow keys, checks for and ignores 180° turns
@@ -193,17 +204,17 @@ function checkCollision(a, b) {
 
 function spawnMine() {
     let x,y;
-    if (mineTiles.length < 10) {
+    if (mineTiles.length <= 15*difficulty) {
         do {
             x = Math.floor(Math.random()*32)*20+1;
             y = Math.floor(Math.random()*32)*20+1;
         } while (checkCollision(x,y) != "moveOn");
         
-        //prevent Mines from spawning less than 3 tiles ahead in moving direction
-        if((direction == "left" && x > (snakeTiles[0].x - 60) && x < snakeTiles.x) ||
-        (direction == "right" && x < (snakeTiles[0].x + 60) && x > snakeTiles.x) ||
-        (direction == "up" && y > (snakeTiles[0].y - 60) && x < snakeTiles.y) ||
-        (direction == "down" && y < (snakeTiles[0].y + 60) && x > snakeTiles.y)) {
+        //prevent Mines from spawning less than 5 tiles ahead in moving direction
+        if((direction == "left" && y == snakeTiles[0].y && x > (snakeTiles[0].x - 100) && x < snakeTiles.x) ||
+        (direction == "right" && y == snakeTiles[0].y && x < (snakeTiles[0].x + 100) && x > snakeTiles.x) ||
+        (direction == "up" && x == snakeTiles[0].x && y > (snakeTiles[0].y - 100) && y < snakeTiles.y) ||
+        (direction == "down" && x == snakeTiles[0].x && y < (snakeTiles[0].y + 100) && y > snakeTiles.y)) {
             return;
         }
         mine.fillStyle = "red";
@@ -225,4 +236,16 @@ function gameOver() {
     grid.font = "40px Arial";
     grid.textAlign = "center";
     grid.fillText("Game Over!", 320, 320);
+}
+
+function setEasyMode() {
+    difficulty = 0;
+}
+
+function setIntermediateMode() {
+    difficulty = 1;
+}
+
+function setHardMode() {
+    difficulty = 2;
 }

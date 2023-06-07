@@ -15,7 +15,7 @@ h1, h2, p {
     padding-top: 20px;
 }
 
-#startbutton {
+.button {
     margin-bottom: 20px;
     padding: 5px;
     background-color: #2aa4cd;
@@ -27,12 +27,18 @@ h1, h2, p {
     box-shadow: 5px 5px 5px #4ac4ed;
 }
 
-#startbutton:hover {
+.button:hover {
     background-color: #0a84ad;
     box-shadow: 5px 5px 5px #2aa4cd;
 }
 
-#startbutton:active {
+.button:active {
     box-shadow: 2px 2px 2px #1a94bd;
     transform: translateX(3px) translateY(3px);
+}
+
+#diffwrapper {
+    display: flex;
+    width: 320px;
+    justify-content: space-evenly;
 }
