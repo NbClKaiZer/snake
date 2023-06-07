@@ -10,8 +10,10 @@ const board = document.querySelector("#board");
 let grid = board.getContext("2d");
 let snake = board.getContext("2d");
 let apple = board.getContext("2d");
+let mine = board.getContext("2d");
 let snakeTiles = [];
 let appleTiles = [];
+let mineTiles = [];
 let direction = "left";
 let lastMove = "left";
 
@@ -25,11 +27,14 @@ let lastMove = "left";
 
 //board outer border
 grid.rect(0, 0, 642, 642);
+grid.strokeStyle = "#bbbbbb";
 grid.stroke();
+grid.fillStyle= "#3c3c3c"
+grid.fillRect(1, 1, 641, 641);
 
 
 //initial snake figure generation
-snake.fillStyle = "black";
+snake.fillStyle = "#2aa4cd";
 
 for (let j=0; j<=3; j++) {
     let x = 321 + j * 20;
@@ -103,7 +108,8 @@ function moveSnake() {
     if (checkCollision(x,y) != "appleCollision") {
         let a = snakeTiles[snakeTiles.length - 1].x;
         let b = snakeTiles[snakeTiles.length - 1].y;
-        snake.clearRect(a, b, 20, 20);
+        snake.fillStyle = "#3c3c3c";
+        snake.fillRect(a, b, 20, 20);
         snakeTiles.pop();
     }
 
@@ -111,11 +117,13 @@ function moveSnake() {
     if (checkCollision(x,y) == "snakeCollision") {
         clearInterval(snakeInt);
         clearInterval(appleInt);
+        clearInterval(mineInt);
+        clearInterval(demineInt);
         return "Game Over";
     }
 
     //add new snake tile ahead
-    snake.fillStyle = "black";
+    snake.fillStyle = "#2aa4cd";
     snake.fillRect(x, y, 20, 20);
     snakeTiles.unshift({x: x, y: y});
 }
@@ -129,7 +137,7 @@ function spawnApple() {
         y = Math.floor(Math.random()*32)*20+1;
     } while (checkCollision(x,y) != "moveOn");
 
-    apple.fillStyle = "green";
+    apple.fillStyle = "#a2c037";
     apple.fillRect(x, y, 20, 20);
     appleTiles.push({x: x, y: y});
 }
@@ -151,5 +159,46 @@ function checkCollision(a, b) {
             event = "appleCollision";
         };
     });
+    mineTiles.forEach((tile) => {
+        if (tile.x == a && tile.y == b) {
+            clearInterval(snakeInt);
+            clearInterval(appleInt);
+            clearInterval(mineInt);
+            clearInterval(demineInt);
+            return "Game Over";
+        };
+    });
     return event;
 }
+
+function spawnMine() {
+    let x,y;
+    if (mineTiles.length < 10) {
+        do {
+            x = Math.floor(Math.random()*32)*20+1;
+            y = Math.floor(Math.random()*32)*20+1;
+        } while (checkCollision(x,y) != "moveOn");
+        
+        //prevent Mines from spawning less than 3 tiles ahead in moving direction
+        if((direction == "left" && x > (snakeTiles[0].x - 60) && x < snakeTiles.x) ||
+        (direction == "right" && x < (snakeTiles[0].x + 60) && x > snakeTiles.x) ||
+        (direction == "up" && y > (snakeTiles[0].y - 60) && x < snakeTiles.y) ||
+        (direction == "down" && y < (snakeTiles[0].y + 60) && x > snakeTiles.y)) {
+            return;
+        }
+        mine.fillStyle = "red";
+        mine.fillRect(x, y, 20, 20);
+        mineTiles.push({x: x, y: y});
+    }
+}
+
+function despawnMine() {
+    let a = mineTiles[0].x;
+    let b = mineTiles[0].y;
+    mine.fillStyle = "#3c3c3c";
+    mine.fillRect(a, b, 20, 20);
+    mineTiles.shift();
+}
+
+let mineInt = setInterval(spawnMine, 10000);
+let demineInt = setInterval(despawnMine, 14000);
