@@ -41,7 +41,7 @@ function startGame() {
     //reset tile arrays, move direction, intervals and board
     snakeTiles = [];
     appleTiles = [];
-    mineTimes = [];
+    mineTiles = [];
     direction = "left";
     lastMove = "left";
     clearInterval(snakeInt);
