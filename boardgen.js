@@ -37,7 +37,6 @@ let appleTiles = [];
 let direction = "left";
 let lastMove = "left";
 
-//debug grid generation
 /*for (let i=1; i<=641; i+=20) {
     grid.moveTo(i, 0);
     grid.lineTo(i, 641);
