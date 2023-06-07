@@ -1,0 +1,21 @@
+body {
+    background-color: #171717;
+}
+
+h1, h2, p {
+    color: #eeeeee;
+    text-align: center;
+}
+
+#canvaswrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
+    border: 1px solid white;
+}
+
+#startbutton {
+    margin-bottom: 20px;
+}

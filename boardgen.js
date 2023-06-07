@@ -16,6 +16,10 @@ let appleTiles = [];
 let mineTiles = [];
 let direction = "left";
 let lastMove = "left";
+let snakeInt;
+let appleInt;
+let mineInt;
+let demineInt;
 
 //Debug-Grid generator
 /*for (let i=1; i<=641; i+=20) {
@@ -30,17 +34,37 @@ grid.rect(0, 0, 642, 642);
 grid.strokeStyle = "#bbbbbb";
 grid.stroke();
 grid.fillStyle= "#3c3c3c"
-grid.fillRect(1, 1, 641, 641);
+grid.fillRect(1, 1, 640, 640);
 
-
-//initial snake figure generation
-snake.fillStyle = "#2aa4cd";
-
-for (let j=0; j<=3; j++) {
-    let x = 321 + j * 20;
-    let y = 321;
-    snake.fillRect(x, y, 20, 20);
-    snakeTiles.push({x: x, y: y});
+function startGame() {
+    //reset tile arrays, move direction, intervals and board
+    snakeTiles = [];
+    appleTiles = [];
+    mineTimes = [];
+    direction = "left";
+    lastMove = "left";
+    clearInterval(snakeInt);
+    clearInterval(appleInt);
+    clearInterval(mineInt);
+    clearInterval(demineInt);
+    grid.fillStyle= "#3c3c3c"
+    grid.fillRect(1, 1, 640, 640);
+    
+    //initial snake figure generation
+    snake.fillStyle = "#2aa4cd";
+    for (let j=0; j<=3; j++) {
+        let x = 321 + j * 20;
+        let y = 321;
+        snake.fillRect(x, y, 20, 20);
+        snakeTiles.push({x: x, y: y});
+    }
+    
+    //initialize movement and item spawns
+    snakeInt = setInterval(moveSnake, 150);
+    spawnApple();
+    appleInt = setInterval(spawnApple, 5000);
+    mineInt = setInterval(spawnMine, 10000);
+    demineInt = setInterval(despawnMine, 14000);
 }
 
 //basic controls w,a,s,d and arrow keys, checks for and ignores 180° turns
@@ -119,6 +143,7 @@ function moveSnake() {
         clearInterval(appleInt);
         clearInterval(mineInt);
         clearInterval(demineInt);
+        gameOver();
         return "Game Over";
     }
 
@@ -127,8 +152,6 @@ function moveSnake() {
     snake.fillRect(x, y, 20, 20);
     snakeTiles.unshift({x: x, y: y});
 }
-
-let snakeInt = setInterval(moveSnake, 150);
 
 function spawnApple() {
     let x,y;
@@ -141,10 +164,6 @@ function spawnApple() {
     apple.fillRect(x, y, 20, 20);
     appleTiles.push({x: x, y: y});
 }
-
-spawnApple();
-
-let appleInt = setInterval(spawnApple, 5000);
 
 function checkCollision(a, b) {
     let event = "moveOn";
@@ -165,6 +184,7 @@ function checkCollision(a, b) {
             clearInterval(appleInt);
             clearInterval(mineInt);
             clearInterval(demineInt);
+            gameOver();
             return "Game Over";
         };
     });
@@ -200,5 +220,9 @@ function despawnMine() {
     mineTiles.shift();
 }
 
-let mineInt = setInterval(spawnMine, 10000);
-let demineInt = setInterval(despawnMine, 14000);
+function gameOver() {
+    grid.fillStyle = "#eeeeee";
+    grid.font = "40px Arial";
+    grid.textAlign = "center";
+    grid.fillText("Game Over!", 320, 320);
+}
