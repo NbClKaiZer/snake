@@ -6,12 +6,21 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <!--link rel="stylesheet" href="./styles.css"-->
         <meta charset="UTF-8">
+        <link rel="stylesheet" href="./styles.css">
     </head>
     <body>
-        <h1>Solid Snake v1.0</h1>
+        <h1>Solid Snake v1.4</h1>
         <h2>A remake of the classic acard game</h2>
-        <p>Use W, A, S, D or arrow keys. On game over, refresh page manually to restart.</p>
-        <canvas id="board" width="642" height="642"></canvas>
+        <p>Use W, A, S, D or arrow keys. Click start button to start or restart game.</p>
+        <div id="canvaswrapper">
+            <div id="diffwrapper">
+                <button onclick="setEasyMode()" class="button">Easy</button>
+                <button onclick="setIntermediateMode()" class="button">Intermediate</button>
+                <button onclick="setHardMode()" class="button">Hard</button>
+            </div>
+            <button onclick="startGame()" class="button">Start Game</button>
+            <canvas id="board" width="642" height="642"></canvas>
+        </div>
         <script src="boardgen.js"></script>
     </body>
 </html>
