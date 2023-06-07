@@ -13,9 +13,26 @@ h1, h2, p {
     justify-content: center;
     align-items: center;
     padding-top: 20px;
-    border: 1px solid white;
 }
 
 #startbutton {
     margin-bottom: 20px;
+    padding: 5px;
+    background-color: #2aa4cd;
+    border: 0;
+    border-radius: 3px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    color: #3c3c3c;
+    box-shadow: 5px 5px 5px #4ac4ed;
+}
+
+#startbutton:hover {
+    background-color: #0a84ad;
+    box-shadow: 5px 5px 5px #2aa4cd;
+}
+
+#startbutton:active {
+    box-shadow: 2px 2px 2px #1a94bd;
+    transform: translateX(3px) translateY(3px);
 }
