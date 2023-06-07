@@ -148,14 +148,13 @@ function moveSnake() {
         snakeTiles.pop();
     }
 
-    //on collision with another snake tile, game over
-    if (checkCollision(x,y) == "snakeCollision") {
+    //on collision with mine tile or another snake tile, game over
+    if (checkCollision(x,y) == "snakeCollision" || checkCollision(x,y) == "mineCollision") {
         clearInterval(snakeInt);
         clearInterval(appleInt);
         clearInterval(mineInt);
         clearInterval(demineInt);
         gameOver();
-        return "Game Over";
     }
 
     //add new snake tile ahead
@@ -195,8 +194,7 @@ function checkCollision(a, b) {
             clearInterval(appleInt);
             clearInterval(mineInt);
             clearInterval(demineInt);
-            gameOver();
-            return "Game Over";
+            event = "mineCollision";
         };
     });
     return event;
