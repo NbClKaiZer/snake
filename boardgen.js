@@ -1,3 +1,11 @@
+/*
+Roadmap for v1.x:
+- add Mine spawn and mine collision handler
+- add starting screen / start button
+- add reset on game over
+- add game difficulty options (three presets)
+*/
+
 const board = document.querySelector("#board");
 let grid = board.getContext("2d");
 let snake = board.getContext("2d");
