@@ -141,7 +141,7 @@ function moveSnake() {
     snakeTiles.unshift({x: x, y: y});
 }
 
-let snakeInt = setInterval(moveSnake, 200);
+let snakeInt = setInterval(moveSnake, 150);
 
 function spawnApple() {
     let x,y;
@@ -157,7 +157,7 @@ function spawnApple() {
 
 spawnApple();
 
-let appleInt = setInterval(spawnApple, 7000);
+let appleInt = setInterval(spawnApple, 5000);
 
 function checkCollision(a, b) {
     let event = "moveOn";
