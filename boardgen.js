@@ -121,10 +121,8 @@ function moveSnake() {
         }
     }
 
-    let collision = checkCollision(x,y);
-
     //only remove last snake tile if no apple is eaten this turn
-    if (collision != "appleCollision") {
+    if (checkCollision(x,y) != "appleCollision") {
         let a = snakeTiles[snakeTiles.length - 1].x;
         let b = snakeTiles[snakeTiles.length - 1].y;
         snake.clearRect(a, b, 20, 20);
@@ -132,7 +130,7 @@ function moveSnake() {
     }
 
     //on collision with another snake tile, game over
-    if (collision == "snakeCollision") {
+    if (checkCollision(x,y) == "snakeCollision") {
         clearInterval(snakeInt);
         clearInterval(appleInt);
         return "Game Over";
