@@ -1,9 +1,8 @@
-/*
-Roadmap for v1.x:
-- add Mine spawn and mine collision handler
-- add starting screen / start button
-- add reset on game over
-- add game difficulty options (three presets)
+/*Roadmap for v1.5+
+- remove active apple tile on collision inside moveSnake() rather than checkCollision()
+- add background music
+- add soundeffects
+- add a toggle menu for custom difficulty
 */
 
 const board = document.querySelector("#board");
@@ -78,7 +77,7 @@ function startGame() {
     spawnApple();
 }
 
-//basic controls w,a,s,d and arrow keys, checks for and ignores 180° turns
+//basic controls w,a,s,d and arrow keys, checks for and blocks 180° turns
 document.onkeydown = (e) => {
     switch (e.key) {
         case "ArrowLeft":
@@ -112,7 +111,7 @@ function moveSnake() {
     let x = snakeTiles[0].x;
     let y = snakeTiles[0].y;
 
-    //determin location of next tile, save movement direction for 180° check on controls
+    //determin location of next tile, save latest movement direction for 180° check on controls
     if (direction == "left") {
         lastMove = "left";
         x = x-20;
@@ -139,7 +138,7 @@ function moveSnake() {
         }
     }
 
-    //only remove last snake tile if no apple is eaten this turn
+    //remove last snake tile if no apple is eaten this turn
     if (checkCollision(x,y) != "appleCollision") {
         let a = snakeTiles[snakeTiles.length - 1].x;
         let b = snakeTiles[snakeTiles.length - 1].y;
@@ -148,7 +147,7 @@ function moveSnake() {
         snakeTiles.pop();
     }
 
-    //on collision with mine tile or another snake tile, game over
+    //on mine or snake collision, game over
     if (checkCollision(x,y) == "snakeCollision" || checkCollision(x,y) == "mineCollision") {
         clearInterval(snakeInt);
         clearInterval(appleInt);
@@ -165,6 +164,8 @@ function moveSnake() {
 
 function spawnApple() {
     let x,y;
+
+    //select random tiles until a vacant tile is found
     do {
         x = Math.floor(Math.random()*32)*20+1;
         y = Math.floor(Math.random()*32)*20+1;
@@ -177,17 +178,21 @@ function spawnApple() {
 
 function checkCollision(a, b) {
     let event = "moveOn";
+
     snakeTiles.forEach((tile) => {
         if (tile.x == a && tile.y == b) {
             event = "snakeCollision";
         };
     });
+
+    //removing apples on collision check should be done in moveSnake() in the future
     appleTiles.forEach((tile) => {
         if (tile.x == a && tile.y == b) {
             appleTiles.splice(appleTiles.indexOf(tile), 1);
             event = "appleCollision";
         };
     });
+
     mineTiles.forEach((tile) => {
         if (tile.x == a && tile.y == b) {
             clearInterval(snakeInt);
@@ -197,24 +202,29 @@ function checkCollision(a, b) {
             event = "mineCollision";
         };
     });
+    //returns the appropriate collision, if any was found, or moveOn if not
     return event;
 }
 
 function spawnMine() {
     let x,y;
+
+    //maximum number of mines: 0 on easy, 15 on normal, 30 on hard
     if (mineTiles.length <= 15*difficulty) {
+        //select random tiles, until free tile is found
         do {
             x = Math.floor(Math.random()*32)*20+1;
             y = Math.floor(Math.random()*32)*20+1;
         } while (checkCollision(x,y) != "moveOn");
         
-        //prevent Mines from spawning less than 5 tiles ahead in moving direction
+        //prevent Mines from spawning less than 5 tiles ahead from snake head in recent moving direction
         if((direction == "left" && y == snakeTiles[0].y && x > (snakeTiles[0].x - 100) && x < snakeTiles.x) ||
         (direction == "right" && y == snakeTiles[0].y && x < (snakeTiles[0].x + 100) && x > snakeTiles.x) ||
         (direction == "up" && x == snakeTiles[0].x && y > (snakeTiles[0].y - 100) && y < snakeTiles.y) ||
         (direction == "down" && x == snakeTiles[0].x && y < (snakeTiles[0].y + 100) && y > snakeTiles.y)) {
             return;
         }
+
         mine.fillStyle = "red";
         mine.fillRect(x, y, 20, 20);
         mineTiles.push({x: x, y: y});
