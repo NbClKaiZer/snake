@@ -21,6 +21,33 @@
                     <button onclick="setDifficulty(3)" class="button">Hard</button>
                     <button onclick="setDifficulty(4)" class="button">Insane</button>
                 </div>
+                <div id="diffwrapper">
+                    <button onclick="toggleCustomSetup()" class="button">Custom</button>
+                </div>
+                <div id="customwrapper">
+                    <form id="customsetupform">
+                        <div id="lablewrapper" class="formsorter">
+                            <lable for="snakeInt" class="formlabel">Snake Speed:</lable>
+                            <lable for="appleInt">Apple spawn:</lable>
+                            <lable for="mineInt">Mine Speed:</lable>
+                            <lable for="demineInt">Mine Despawn:</lable>
+                            <lable for="maxMines">Max number of Mines:</lable>
+                        </div>
+                        <div id="inputwrapper" class="formsorter">
+                            <input type="number" id="snakeInt" name="snakeInt" placeholder="150">
+                            <input type="number" id="appleInt" name="appleInt" placeholder="4500">
+                            <input type="number" id="mineInt" name="mineInt" placeholder="6000">
+                            <input type="number" id="demineInt" name="demineInt" placeholder="12000">
+                            <input type="number" id="maxMines" name="maxMines" placeholder="20">
+                        </div>
+                        <div id="tooltipwrapper" class="formsorter">
+                            <p class="tooltip">(in milliseconds)</p>
+                            <p class="tooltip">(in milliseconds)</p>
+                            <p class="tooltip">(in milliseconds)</p>
+                            <p class="tooltip">(in milliseconds)</p>
+                        </div>
+                    </form>
+                </div>
             </div>
             <div id="canvaswrapper">
                 <div id="audiowrapper">

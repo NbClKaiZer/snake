@@ -13,18 +13,22 @@ h1, h2, p {
 
 h1 {
     color: #2aa4cd;
+    margin: 15px;
 }
 
 h2 {
     color: #a2c037;
+    margin: 10px;
 }
 
-p {
+p, lable {
     color: #eee;
 }
 
 #optionwrapper {
     min-width: 600px;
+    display: flex;
+    flex-direction: column;
 }
 
 #canvaswrapper {
@@ -65,7 +69,7 @@ p {
 #diffwrapper {
     display: flex;
     justify-content: space-evenly;
-    margin-top: 20px;
+    margin: 20px;
 }
 
 #audiowrapper {
@@ -87,4 +91,30 @@ p {
 
 #background-music {
     padding-right: 10px;
+}
+
+#customwrapper {
+    display: none;
+    margin-top: 20px;
+}
+
+#customwrapper.show {
+    display: flex;
+}
+
+#customsetupform {
+    display: flex;
+}
+
+.formsorter {
+    display: flex;
+    flex-direction: column;
+}
+
+.tooltip {
+    margin: 2px 0 2px 5px;
+}
+
+lable {
+    margin: 2px 5px 2px 0;
 }
