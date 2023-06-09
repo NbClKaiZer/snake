@@ -243,7 +243,7 @@ function checkCollision(a, b) {
 function spawnMine() {
     let x,y;
 
-    if (mineTiles.length <= maxMines) {
+    if (mineTiles.length < maxMines) {
         //select random tiles, until free tile is found
         do {
             x = Math.floor(Math.random()*32)*20+1;
