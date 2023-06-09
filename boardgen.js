@@ -11,6 +11,7 @@
 - game over on collision with enemy snake
 - add adventure mode
 - add the first 5 pre-made levels and challenges
+- add graphics for apples, mines and 1-tile enemies
 */
 
 const board = document.querySelector("#board");
