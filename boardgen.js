@@ -1,10 +1,11 @@
 /*Roadmap for v1.5+
-- remove active apple tile on collision inside moveSnake() rather than checkCollision()
-- add background music
-- add soundeffects
-- add buttons to toggle music and sounds
-- add a toggle menu for custom difficulty
-- add 2 more difficulty presets
+- remove active apple tile on collision inside moveSnake() rather than checkCollision() DONE
+- add background music DONE
+- add soundeffects DONE
+- add buttons to toggle music and sounds DONE
+- add a toggle menu for custom difficulty DONE
+- add 2 more difficulty presets DONE
+- add actual functionality to mute sound button DONE
 */
 
 const board = document.querySelector("#board");
@@ -21,10 +22,11 @@ let snakeInt;
 let appleInt;
 let mineInt;
 let demineInt;
-let difficulty = 1;
+let difficulty = 2;
 let bleep = new Audio("./bleep.mp3");
 let boom = new Audio("./boom.mp3");
 let hurt = new Audio("./hurt.mp3");
+let maxMines;
 
 //Debug-Grid generator
 /*for (let i=1; i<=641; i+=20) {
@@ -32,6 +34,7 @@ let hurt = new Audio("./hurt.mp3");
     grid.lineTo(i, 641);
     grid.moveTo(0, i);
     grid.lineTo(641, i);
+    grid.stroke();
 }*/
 
 //board outer border
@@ -54,6 +57,7 @@ function startGame() {
     clearInterval(demineInt);
     grid.fillStyle= "#3c3c3c"
     grid.fillRect(1, 1, 640, 640);
+    document.querySelector("#customconfirm").classList.remove('show');
     
     //initial snake figure generation
     snake.fillStyle = "#2aa4cd";
@@ -67,17 +71,39 @@ function startGame() {
     //initialize movement and item spawns
     if (difficulty == 0) {
         snakeInt = setInterval(moveSnake, 250);
-        appleInt = setInterval(spawnApple, 7000);
+        appleInt = setInterval(spawnApple, 7500);
+        maxMines = 0;
     } else if (difficulty == 1) {
-        snakeInt = setInterval(moveSnake, 150);
-        appleInt = setInterval(spawnApple, 5000);
-        mineInt = setInterval(spawnMine, 8000);
-        demineInt = setInterval(despawnMine, 15000);
+        snakeInt = setInterval(moveSnake, 200);
+        appleInt = setInterval(spawnApple, 6000);
+        mineInt = setInterval(spawnMine, 10000);
+        demineInt = setInterval(despawnMine, 12000);
+        maxMines = 10;
     } else if  (difficulty == 2) {
+        snakeInt = setInterval(moveSnake, 150);
+        appleInt = setInterval(spawnApple, 4500);
+        mineInt = setInterval(spawnMine, 6000);
+        demineInt = setInterval(despawnMine, 12000);
+        maxMines = 20;
+    } else if  (difficulty == 3) {
+        snakeInt = setInterval(moveSnake, 100);
+        appleInt = setInterval(spawnApple, 3000);
+        mineInt = setInterval(spawnMine, 4500);
+        demineInt = setInterval(despawnMine, 12000);
+        maxMines = 30;
+    } else if  (difficulty == 4) {
         snakeInt = setInterval(moveSnake, 75);
         appleInt = setInterval(spawnApple, 3000);
         mineInt = setInterval(spawnMine, 3000);
         demineInt = setInterval(despawnMine, 15000);
+        maxMines = 50;
+    } else if (difficulty == 'custom') {
+        document.querySelector("#customconfirm").classList.add('show');
+        snakeInt = setInterval(moveSnake, document.querySelector("#snakeInt").value);
+        appleInt = setInterval(spawnApple, document.querySelector("#appleInt").value);
+        mineInt = setInterval(spawnMine, document.querySelector("#mineInt").value);
+        demineInt = setInterval(despawnMine, document.querySelector("#demineInt").value);
+        maxMines = document.querySelector("#maxMines").value;
     }
     spawnApple();
 }
@@ -212,8 +238,7 @@ function checkCollision(a, b) {
 function spawnMine() {
     let x,y;
 
-    //maximum number of mines: 0 on easy, 15 on normal, 30 on hard
-    if (mineTiles.length <= 15*difficulty) {
+    if (mineTiles.length <= maxMines) {
         //select random tiles, until free tile is found
         do {
             x = Math.floor(Math.random()*32)*20+1;
@@ -253,14 +278,22 @@ function gameOver() {
     grid.fillText("Game Over!", 320, 320);
 }
 
-function setEasyMode() {
-    difficulty = 0;
+function setDifficulty(d) {
+    difficulty = d;
 }
 
-function setIntermediateMode() {
-    difficulty = 1;
+function toggleCustomSetup() {
+    document.querySelector("#customwrapper").classList.toggle('show');
 }
 
-function setHardMode() {
-    difficulty = 2;
+function toggleSounds() {
+    if (bleep.muted == true) {
+        bleep.muted = false;
+        boom.muted = false;
+        hurt.muted = false;
+    } else {
+        bleep.muted = true;
+        boom.muted = true;
+        hurt.muted = true;
+    }
 }

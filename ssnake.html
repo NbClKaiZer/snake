@@ -11,18 +11,50 @@
     <body>
         <main>
             <div id="optionwrapper">
-                <h1>Solid Snake v1.5</h1>
+                <h1>Solid Snake v1.6</h1>
                 <h2>A remake of the classic acard game</h2>
                 <p>Use W, A, S, D or arrow keys. Click start button to start or restart game.</p>
                 <div id="diffwrapper">
-                    <button onclick="setEasyMode()" class="button">Easy</button>
-                    <button onclick="setIntermediateMode()" class="button">Intermediate</button>
-                    <button onclick="setHardMode()" class="button">Hard</button>
+                    <button onclick="setDifficulty(0)" class="button">Sandbox</button>
+                    <button onclick="setDifficulty(1)" class="button">Easy</button>
+                    <button onclick="setDifficulty(2)" class="button">Normal</button>
+                    <button onclick="setDifficulty(3)" class="button">Hard</button>
+                    <button onclick="setDifficulty(4)" class="button">Insane</button>
                 </div>
+                <div id="diffwrapper">
+                    <button onclick="toggleCustomSetup()" class="button">Custom</button>
+                </div>
+                <div id="customwrapper">
+                    <form id="customsetupform" method="post">
+                        <div id="lablewrapper" class="formsorter">
+                            <lable for="snakeInt" class="formlabel">Snake Speed:</lable>
+                            <lable for="appleInt">Apple Spawn Timer:</lable>
+                            <lable for="mineInt">Mine Spawn Timer:</lable>
+                            <lable for="demineInt">Mine Despawn Timer:</lable>
+                            <lable for="maxMines">Max Number of Mines:</lable>
+                        </div>
+                        <div id="inputwrapper" class="formsorter">
+                            <input type="number" id="snakeInt" name="snakeInt" value="150" min="25" max="500">
+                            <input type="number" id="appleInt" name="appleInt" value="4500" min="200" max="50000">
+                            <input type="number" id="mineInt" name="mineInt" value="6000" min="200" max="50000">
+                            <input type="number" id="demineInt" name="demineInt" value="12000" min="200" max="50000">
+                            <input type="number" id="maxMines" name="maxMines" value="20" min="0" max="200">
+                        </div>
+                        <div id="tooltipwrapper" class="formsorter">
+                            <p class="tooltip">25 - 500 (in ms)</p>
+                            <p class="tooltip">200 - 50000 (in ms)</p>
+                            <p class="tooltip">200 - 50000 (in ms)</p>
+                            <p class="tooltip">200 - 50000 (in ms)</p>
+                            <p class="tooltip">0 - 200</p>
+                        </div>
+                    </form>
+                    <button onclick="setDifficulty('custom')" class="button">Apply</button>
+                </div>
+                <p id="customconfirm">Applying custom values.</p>
             </div>
             <div id="canvaswrapper">
                 <div id="audiowrapper">
-                    <button onclick="disableSounds()" class="button">Mute Sounds</button>
+                    <button onclick="toggleSounds()" class="button">Toggle Sounds</button>
                     <div id="musicwrapper">
                         <p>Music:</p>
                         <audio controls id="background-music">
