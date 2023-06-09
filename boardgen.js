@@ -22,6 +22,9 @@ let appleInt;
 let mineInt;
 let demineInt;
 let difficulty = 1;
+let bleep = new Audio("./bleep.mp3");
+let boom = new Audio("./boom.mp3");
+let hurt = new Audio("./hurt.mp3");
 
 //Debug-Grid generator
 /*for (let i=1; i<=641; i+=20) {
@@ -141,16 +144,23 @@ function moveSnake() {
     }
 
     //remove last snake tile if no apple is eaten this turn
-    if (checkCollision(x,y) != "appleCollision") {
+    if (checkCollision(x,y)[0] != "appleCollision") {
         let a = snakeTiles[snakeTiles.length - 1].x;
         let b = snakeTiles[snakeTiles.length - 1].y;
         snake.fillStyle = "#3c3c3c";
         snake.fillRect(a, b, 20, 20);
         snakeTiles.pop();
+    } else {
+        appleTiles.splice(checkCollision(x,y)[1], 1);
+        bleep.play();
     }
 
     //on mine or snake collision, game over
-    if (checkCollision(x,y) == "snakeCollision" || checkCollision(x,y) == "mineCollision") {
+    if (checkCollision(x,y) == "snakeCollision") {
+        hurt.play();
+        gameOver();
+    } else if (checkCollision(x,y) == "mineCollision") {
+        boom.play();
         gameOver();
     }
 
@@ -186,8 +196,7 @@ function checkCollision(a, b) {
     //removing apples on collision check should be done in moveSnake() in the future
     appleTiles.forEach((tile) => {
         if (tile.x == a && tile.y == b) {
-            appleTiles.splice(appleTiles.indexOf(tile), 1);
-            event = "appleCollision";
+            event = ["appleCollision", appleTiles.indexOf(tile)];
         };
     });
 
