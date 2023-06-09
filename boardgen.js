@@ -149,10 +149,6 @@ function moveSnake() {
 
     //on mine or snake collision, game over
     if (checkCollision(x,y) == "snakeCollision" || checkCollision(x,y) == "mineCollision") {
-        clearInterval(snakeInt);
-        clearInterval(appleInt);
-        clearInterval(mineInt);
-        clearInterval(demineInt);
         gameOver();
     }
 
@@ -195,10 +191,6 @@ function checkCollision(a, b) {
 
     mineTiles.forEach((tile) => {
         if (tile.x == a && tile.y == b) {
-            clearInterval(snakeInt);
-            clearInterval(appleInt);
-            clearInterval(mineInt);
-            clearInterval(demineInt);
             event = "mineCollision";
         };
     });
@@ -240,6 +232,10 @@ function despawnMine() {
 }
 
 function gameOver() {
+    clearInterval(snakeInt);
+    clearInterval(appleInt);
+    clearInterval(mineInt);
+    clearInterval(demineInt);
     grid.fillStyle = "#eeeeee";
     grid.font = "40px Arial";
     grid.textAlign = "center";
