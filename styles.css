@@ -31,8 +31,11 @@ p {
     padding-top: 20px;
 }
 
+#board {
+    margin-bottom: 10px;
+}
+
 .button {
-    margin-top: 20px;
     padding: 5px;
     background-color: #2aa4cd;
     border: 0;
@@ -56,10 +59,22 @@ p {
 #diffwrapper {
     display: flex;
     justify-content: space-evenly;
+    margin-top: 20px;
 }
 
 #audiowrapper {
-    align-self: flex-end;
+    width: 640px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+#audiowrapper > button {
+    font-size: 12px;
+}
+
+#musicwrapper {
     display: flex;
     align-items: center;
 }
