@@ -3,9 +3,9 @@
 - add background music DONE
 - add soundeffects DONE
 - add buttons to toggle music and sounds DONE
-- add a toggle menu for custom difficulty
+- add a toggle menu for custom difficulty DONE
 - add 2 more difficulty presets DONE
-- add actual functionality to mute sound button
+- add actual functionality to mute sound button DONE
 */
 
 const board = document.querySelector("#board");
@@ -57,6 +57,7 @@ function startGame() {
     clearInterval(demineInt);
     grid.fillStyle= "#3c3c3c"
     grid.fillRect(1, 1, 640, 640);
+    document.querySelector("#customconfirm").classList.remove('show');
     
     //initial snake figure generation
     snake.fillStyle = "#2aa4cd";
@@ -96,6 +97,13 @@ function startGame() {
         mineInt = setInterval(spawnMine, 3000);
         demineInt = setInterval(despawnMine, 15000);
         maxMines = 50;
+    } else if (difficulty == 'custom') {
+        document.querySelector("#customconfirm").classList.add('show');
+        snakeInt = setInterval(moveSnake, document.querySelector("#snakeInt").value);
+        appleInt = setInterval(spawnApple, document.querySelector("#appleInt").value);
+        mineInt = setInterval(spawnMine, document.querySelector("#mineInt").value);
+        demineInt = setInterval(despawnMine, document.querySelector("#demineInt").value);
+        maxMines = document.querySelector("#maxMines").value;
     }
     spawnApple();
 }
@@ -276,4 +284,16 @@ function setDifficulty(d) {
 
 function toggleCustomSetup() {
     document.querySelector("#customwrapper").classList.toggle('show');
+}
+
+function toggleSounds() {
+    if (bleep.muted == true) {
+        bleep.muted = false;
+        boom.muted = false;
+        hurt.muted = false;
+    } else {
+        bleep.muted = true;
+        boom.muted = true;
+        hurt.muted = true;
+    }
 }
