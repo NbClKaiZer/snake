@@ -1,11 +1,16 @@
-/*Roadmap for v1.5+
-- remove active apple tile on collision inside moveSnake() rather than checkCollision() DONE
-- add background music DONE
-- add soundeffects DONE
-- add buttons to toggle music and sounds DONE
-- add a toggle menu for custom difficulty DONE
-- add 2 more difficulty presets DONE
-- add actual functionality to mute sound button DONE
+/*Roadmap for v2.0
+- add 1-tile enemies
+- allow enemies to randomly move to free tiles, if available
+- game over on enemy collision
+- add solid, impassable walls (entire tiles for now, maybe 2px borders later)
+- game over on wall collision
+- add enemy 4-tile snakes
+- make enemy snakes look for free tiles in movement direction
+- have enemy snakes die when no free tile is available for their next move
+- have enemy snakes grow on apple collision
+- game over on collision with enemy snake
+- add adventure mode
+- add the first 5 pre-made levels and challenges
 */
 
 const board = document.querySelector("#board");
