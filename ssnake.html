@@ -11,13 +11,15 @@
     <body>
         <main>
             <div id="optionwrapper">
-                <h1>Solid Snake v1.5</h1>
+                <h1>Solid Snake v1.6</h1>
                 <h2>A remake of the classic acard game</h2>
                 <p>Use W, A, S, D or arrow keys. Click start button to start or restart game.</p>
                 <div id="diffwrapper">
-                    <button onclick="setEasyMode()" class="button">Easy</button>
-                    <button onclick="setIntermediateMode()" class="button">Intermediate</button>
-                    <button onclick="setHardMode()" class="button">Hard</button>
+                    <button onclick="setDifficulty(0)" class="button">Sandbox</button>
+                    <button onclick="setDifficulty(1)" class="button">Easy</button>
+                    <button onclick="setDifficulty(2)" class="button">Normal</button>
+                    <button onclick="setDifficulty(3)" class="button">Hard</button>
+                    <button onclick="setDifficulty(4)" class="button">Insane</button>
                 </div>
             </div>
             <div id="canvaswrapper">

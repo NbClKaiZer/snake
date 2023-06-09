@@ -23,8 +23,13 @@ p {
     color: #eee;
 }
 
+#optionwrapper {
+    min-width: 600px;
+}
+
 #canvaswrapper {
     display: flex;
+    min-width: 700px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -36,6 +41,7 @@ p {
 }
 
 .button {
+    width: 100px;
     padding: 5px;
     background-color: #2aa4cd;
     border: 0;

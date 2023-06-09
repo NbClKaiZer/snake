@@ -21,7 +21,7 @@ let snakeInt;
 let appleInt;
 let mineInt;
 let demineInt;
-let difficulty = 1;
+let difficulty = 2;
 let bleep = new Audio("./bleep.mp3");
 let boom = new Audio("./boom.mp3");
 let hurt = new Audio("./hurt.mp3");
@@ -32,6 +32,7 @@ let hurt = new Audio("./hurt.mp3");
     grid.lineTo(i, 641);
     grid.moveTo(0, i);
     grid.lineTo(641, i);
+    grid.stroke();
 }*/
 
 //board outer border
@@ -67,13 +68,23 @@ function startGame() {
     //initialize movement and item spawns
     if (difficulty == 0) {
         snakeInt = setInterval(moveSnake, 250);
-        appleInt = setInterval(spawnApple, 7000);
+        appleInt = setInterval(spawnApple, 7500);
     } else if (difficulty == 1) {
-        snakeInt = setInterval(moveSnake, 150);
-        appleInt = setInterval(spawnApple, 5000);
-        mineInt = setInterval(spawnMine, 8000);
-        demineInt = setInterval(despawnMine, 15000);
+        snakeInt = setInterval(moveSnake, 200);
+        appleInt = setInterval(spawnApple, 6000);
+        mineInt = setInterval(spawnMine, 10000);
+        demineInt = setInterval(despawnMine, 12000);
     } else if  (difficulty == 2) {
+        snakeInt = setInterval(moveSnake, 150);
+        appleInt = setInterval(spawnApple, 4500);
+        mineInt = setInterval(spawnMine, 6000);
+        demineInt = setInterval(despawnMine, 12000);
+    } else if  (difficulty == 3) {
+        snakeInt = setInterval(moveSnake, 100);
+        appleInt = setInterval(spawnApple, 3000);
+        mineInt = setInterval(spawnMine, 4500);
+        demineInt = setInterval(despawnMine, 12000);
+    } else if  (difficulty == 4) {
         snakeInt = setInterval(moveSnake, 75);
         appleInt = setInterval(spawnApple, 3000);
         mineInt = setInterval(spawnMine, 3000);
@@ -212,8 +223,8 @@ function checkCollision(a, b) {
 function spawnMine() {
     let x,y;
 
-    //maximum number of mines: 0 on easy, 15 on normal, 30 on hard
-    if (mineTiles.length <= 15*difficulty) {
+    //maximum number of mines: 0 on Sandox, 16 on normal, 32 on Insane
+    if (mineTiles.length <= 8*difficulty) {
         //select random tiles, until free tile is found
         do {
             x = Math.floor(Math.random()*32)*20+1;
@@ -253,14 +264,6 @@ function gameOver() {
     grid.fillText("Game Over!", 320, 320);
 }
 
-function setEasyMode() {
-    difficulty = 0;
-}
-
-function setIntermediateMode() {
-    difficulty = 1;
-}
-
-function setHardMode() {
-    difficulty = 2;
+function setDifficulty(d) {
+    difficulty = d;
 }
