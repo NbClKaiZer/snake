@@ -148,7 +148,7 @@ function moveSnake() {
     let x = snakeTiles[0].x;
     let y = snakeTiles[0].y;
 
-    //determin location of next tile, save latest movement direction for 180° check on controls
+    //determin location of next tile, save movement direction for 180° check
     if (direction == "left") {
         lastMove = "left";
         x = x-20;
@@ -225,7 +225,7 @@ function checkCollision(a, b) {
         };
     });
 
-    //removing apples on collision check should be done in moveSnake() in the future
+    //additionally returns index of found apple, so it can be easily removed from array within moveSnake()
     appleTiles.forEach((tile) => {
         if (tile.x == a && tile.y == b) {
             event = ["appleCollision", appleTiles.indexOf(tile)];
@@ -252,6 +252,7 @@ function spawnMine() {
         } while (checkCollision(x,y) != "moveOn");
         
         //prevent Mines from spawning less than 5 tiles ahead from snake head in recent moving direction
+            //consider doing this within the do-while-loop to prevent skipping mine spawn
         if((direction == "left" && y == snakeTiles[0].y && x > (snakeTiles[0].x - 100) && x < snakeTiles.x) ||
         (direction == "right" && y == snakeTiles[0].y && x < (snakeTiles[0].x + 100) && x > snakeTiles.x) ||
         (direction == "up" && x == snakeTiles[0].x && y > (snakeTiles[0].y - 100) && y < snakeTiles.y) ||
@@ -283,6 +284,8 @@ function gameOver() {
     grid.textAlign = "center";
     grid.fillText("Game Over!", 320, 320);
 }
+
+//functions to process user input
 
 function setDifficulty(d) {
     difficulty = d;
