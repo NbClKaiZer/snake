@@ -2,7 +2,9 @@
 - remove active apple tile on collision inside moveSnake() rather than checkCollision()
 - add background music
 - add soundeffects
+- add buttons to toggle music and sounds
 - add a toggle menu for custom difficulty
+- add 2 more difficulty presets
 */
 
 const board = document.querySelector("#board");
