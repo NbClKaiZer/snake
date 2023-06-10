@@ -1,7 +1,7 @@
 /*Roadmap for v2.0
-- add 1-tile enemies
-- allow enemies to randomly move to free tiles, if available
-- game over on enemy collision
+- add 1-tile enemies DONE
+- allow enemies to randomly move to free tiles, if available DONE
+- game over on enemy collision DONE
 - add solid, impassable walls (entire tiles for now, maybe 2px borders later)
 - game over on wall collision
 - add enemy 4-tile snakes

@@ -54,6 +54,7 @@ p, lable {
     font-size: 20px;
     color: #3c3c3c;
     box-shadow: 5px 5px 5px #c2e057;
+    border: 1px solid #0a84ad;
 }
 
 .button:hover {
@@ -97,6 +98,11 @@ p, lable {
     display: none;
     flex-direction: column;
     align-items: center;
+    background-color: #292929;
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 3px;
+    box-shadow: 3px 3px 3px #bbb;
 }
 
 #customwrapper.show {
@@ -105,7 +111,7 @@ p, lable {
 
 #customsetupform {
     display: flex;
-    margin: 20px 0 20px 0;
+    margin-bottom: 20px;
 }
 
 .formsorter {
