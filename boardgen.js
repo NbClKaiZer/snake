@@ -19,25 +19,20 @@ let grid = board.getContext("2d");
 let snake = board.getContext("2d");
 let apple = board.getContext("2d");
 let mine = board.getContext("2d");
-let enemy = board.getContext("2d");
 let snakeTiles = [];
 let appleTiles = [];
 let mineTiles = [];
-let enemyTiles = [];
 let direction = "left";
 let lastMove = "left";
 let snakeInt;
 let appleInt;
 let mineInt;
 let demineInt;
-let enemyInt;
 let difficulty = 2;
 let bleep = new Audio("./bleep.mp3");
 let boom = new Audio("./boom.mp3");
 let hurt = new Audio("./hurt.mp3");
-let shoot = new Audio("./shoot.mp3");
 let maxMines;
-let enemyAmount;
 
 //Debug-Grid generator
 /*for (let i=1; i<=641; i+=20) {
@@ -60,14 +55,12 @@ function startGame() {
     snakeTiles = [];
     appleTiles = [];
     mineTiles = [];
-    enemyTiles = [];
     direction = "left";
     lastMove = "left";
     clearInterval(snakeInt);
     clearInterval(appleInt);
     clearInterval(mineInt);
     clearInterval(demineInt);
-    clearInterval(enemyInt);
     grid.fillStyle= "#3c3c3c"
     grid.fillRect(1, 1, 640, 640);
     document.querySelector("#customconfirm").classList.remove('show');
@@ -97,41 +90,28 @@ function startGame() {
         appleInt = setInterval(spawnApple, 4500);
         mineInt = setInterval(spawnMine, 6000);
         demineInt = setInterval(despawnMine, 12000);
-        enemyInt = setInterval(moveEnemy, 500);
         maxMines = 20;
-        enemyAmount = 1;
     } else if  (difficulty == 3) {
         snakeInt = setInterval(moveSnake, 100);
         appleInt = setInterval(spawnApple, 3000);
         mineInt = setInterval(spawnMine, 4500);
         demineInt = setInterval(despawnMine, 12000);
-        enemyInt = setInterval(moveEnemy, 300);
         maxMines = 30;
-        enemyAmount = 3;
     } else if  (difficulty == 4) {
         snakeInt = setInterval(moveSnake, 75);
         appleInt = setInterval(spawnApple, 3000);
         mineInt = setInterval(spawnMine, 3000);
         demineInt = setInterval(despawnMine, 15000);
-        enemyInt = setInterval(moveEnemy, 100);
         maxMines = 50;
-        enemyAmount = 5;
     } else if (difficulty == 'custom') {
         document.querySelector("#customconfirm").classList.add('show');
         snakeInt = setInterval(moveSnake, document.querySelector("#snakeInt").value);
         appleInt = setInterval(spawnApple, document.querySelector("#appleInt").value);
         mineInt = setInterval(spawnMine, document.querySelector("#mineInt").value);
         demineInt = setInterval(despawnMine, document.querySelector("#demineInt").value);
-        enemyInt = setInterval(moveEnemy, document.querySelector("#enemyInt").value);
         maxMines = document.querySelector("#maxMines").value;
-        enemyAmount = document.querySelector("#enemyAmount").value;
     }
-
-    //spawn initial nonplayer-objects
     spawnApple();
-    for (let i=0; i<enemyAmount; i++) {
-        spawnEnemy();
-    }
 }
 
 //basic controls w,a,s,d and arrow keys, checks for and blocks 180° turns
@@ -211,15 +191,9 @@ function moveSnake() {
     if (checkCollision(x,y) == "snakeCollision") {
         hurt.play();
         gameOver();
-        return;
     } else if (checkCollision(x,y) == "mineCollision") {
         boom.play();
         gameOver();
-        return;
-    } else if (checkCollision(x,y) == "enemyCollision") {
-        shoot.play();
-        gameOver();
-        return;
     }
 
     //add new snake tile ahead
@@ -263,13 +237,6 @@ function checkCollision(a, b) {
             event = "mineCollision";
         };
     });
-
-    enemyTiles.forEach((tile) => {
-        if (tile.x == a && tile.y == b) {
-            event = "enemyCollision";
-        }
-    });
-
     //returns the appropriate collision, if any was found, or moveOn if not
     return event;
 }
@@ -291,7 +258,7 @@ function spawnMine() {
         (direction == "up" && x == snakeTiles[0].x && y > (snakeTiles[0].y - 100) && y < snakeTiles.y) ||
         (direction == "down" && x == snakeTiles[0].x && y < (snakeTiles[0].y + 100) && y > snakeTiles.y)) {
             return;
-        };
+        }
 
         mine.fillStyle = "red";
         mine.fillRect(x, y, 20, 20);
@@ -361,7 +328,6 @@ function gameOver() {
     clearInterval(appleInt);
     clearInterval(mineInt);
     clearInterval(demineInt);
-    clearInterval(enemyInt);
     grid.fillStyle = "#eeeeee";
     grid.font = "40px Arial";
     grid.textAlign = "center";
@@ -378,17 +344,14 @@ function toggleCustomSetup() {
     document.querySelector("#customwrapper").classList.toggle('show');
 }
 
-//consider creating an Array with all sounds to iterate over for the toggle
 function toggleSounds() {
     if (bleep.muted == true) {
         bleep.muted = false;
         boom.muted = false;
         hurt.muted = false;
-        shoot.muted = false;
     } else {
         bleep.muted = true;
         boom.muted = true;
         hurt.muted = true;
-        shoot.muted = true;
     }
 }
