@@ -274,6 +274,55 @@ function despawnMine() {
     mineTiles.shift();
 }
 
+function spawnEnemy() {
+    let x, y;
+
+    //select random tiles, until free tile is found, exclude tiles in starting line of player snake
+    do {
+        x = Math.floor(Math.random()*32)*20+1;
+        y = Math.floor(Math.random()*32)*20+1;
+    } while (checkCollision(x,y) != "moveOn" || y == 321);
+
+    enemy.fillStyle = "orange";
+    enemy.fillRect(x, y, 20, 20);
+    enemyTiles.push({x: x, y: y});
+}
+
+function moveEnemy() {
+    enemyTiles.forEach((tango) => {
+        let x = tango.x;
+        let y = tango.y;
+
+        let c = Math.floor(Math.random()*8);
+        let enemyMoved = false;
+        enemy.fillStyle = "orange";
+
+        //50% chance to move, on move have equal chance to move in any of the 4 directions, only move if no collision, not allowed to warp to opposite side
+        if (c==0 && checkCollision(x-20,y) == "moveOn" && x>1) {
+            enemy.fillRect(x-20, y, 20, 20);
+            tango.x = x-20;
+            enemyMoved = true;
+        } else if (c==1 && checkCollision(x+20,y) == "moveOn" && x<621) {
+            enemy.fillRect(x+20, y, 20, 20);
+            tango.x = x+20;
+            enemyMoved = true;
+        } else if (c==2 && checkCollision(x,y-20) == "moveOn" && y>1) {
+            enemy.fillRect(x, y-20, 20, 20);
+            tango.y = y-20;
+            enemyMoved = true;
+        } else if (c==3 && checkCollision(x,y+20) == "moveOn" && y<621) {
+            enemy.fillRect(x, y+20, 20, 20);
+            tango.y = y+20;
+            enemyMoved = true;
+        };
+
+        if (enemyMoved == true) {
+        enemy.fillStyle = "#3c3c3c";
+        enemy.fillRect(x, y, 20, 20);
+        };
+    });
+}
+
 function gameOver() {
     clearInterval(snakeInt);
     clearInterval(appleInt);
