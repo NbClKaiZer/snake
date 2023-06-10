@@ -330,7 +330,7 @@ function moveEnemy() {
         let enemyMoved = false;
         enemy.fillStyle = "orange";
 
-        //on move, have equal chances to move in any of the 4 directions, only move if no collision, not allowed to warp to opposite side
+        //50% chance to move, on move have equal chance to move in any of the 4 directions, only move if no collision, not allowed to warp to opposite side
         if (c==0 && checkCollision(x-20,y) == "moveOn" && x>1) {
             enemy.fillRect(x-20, y, 20, 20);
             tango.x = x-20;
