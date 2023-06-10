@@ -32,8 +32,6 @@
                             <lable for="mineInt">Mine Spawn Timer:</lable>
                             <lable for="demineInt">Mine Despawn Timer:</lable>
                             <lable for="maxMines">Max Number of Mines:</lable>
-                            <lable for="enemyInt">Enemy Speed:</lable>
-                            <lable for="enemyAmount">Number of Enemies:</lable>
                         </div>
                         <div id="inputwrapper" class="formsorter">
                             <input type="number" id="snakeInt" name="snakeInt" value="150" min="25" max="500">
@@ -41,8 +39,6 @@
                             <input type="number" id="mineInt" name="mineInt" value="6000" min="200" max="50000">
                             <input type="number" id="demineInt" name="demineInt" value="12000" min="200" max="50000">
                             <input type="number" id="maxMines" name="maxMines" value="20" min="0" max="200">
-                            <input type="number" id="enemyInt" name="enemyInt" value="500" min="50" max="5000">
-                            <input type="number" id="enemyAmount" name="enemyAmount" value="1" min="0" max="20">
                         </div>
                         <div id="tooltipwrapper" class="formsorter">
                             <p class="tooltip">25 - 500 (in ms)</p>
@@ -50,8 +46,6 @@
                             <p class="tooltip">200 - 50000 (in ms)</p>
                             <p class="tooltip">200 - 50000 (in ms)</p>
                             <p class="tooltip">0 - 200</p>
-                            <p class="tooltip">50 - 5000 (in ms)</p>
-                            <p class="tooltip">0 - 20</p>
                         </div>
                     </form>
                     <button onclick="setDifficulty('custom')" class="button">Apply</button>
