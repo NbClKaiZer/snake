@@ -14,12 +14,13 @@
 - add graphics for apples, mines and 1-tile enemies
 */
 
+//consider reducing number of global variables by grouping some into arrays
 const board = document.querySelector("#board");
-let grid = board.getContext("2d");
-let snake = board.getContext("2d");
-let apple = board.getContext("2d");
-let mine = board.getContext("2d");
-let enemy = board.getContext("2d");
+const grid = board.getContext("2d");
+const snake = board.getContext("2d");
+const apple = board.getContext("2d");
+const mine = board.getContext("2d");
+const enemy = board.getContext("2d");
 let snakeTiles = [];
 let appleTiles = [];
 let mineTiles = [];
@@ -32,10 +33,7 @@ let mineInt;
 let demineInt;
 let enemyInt;
 let difficulty = 2;
-let bleep = new Audio("./bleep.mp3");
-let boom = new Audio("./boom.mp3");
-let hurt = new Audio("./hurt.mp3");
-let shoot = new Audio("./shoot.mp3");
+let sounds = [new Audio("./bleep.mp3"), new Audio("./boom.mp3"), new Audio("./hurt.mp3"), new Audio("./shoot.mp3")];
 let maxMines;
 let enemyAmount;
 
@@ -195,7 +193,7 @@ function moveSnake() {
         }
     }
 
-    //remove last snake tile if no apple is eaten this turn
+    //remove oldest snake tile if no apple is eaten this turn
     if (checkCollision(x,y)[0] != "appleCollision") {
         let a = snakeTiles[snakeTiles.length - 1].x;
         let b = snakeTiles[snakeTiles.length - 1].y;
@@ -204,20 +202,20 @@ function moveSnake() {
         snakeTiles.pop();
     } else {
         appleTiles.splice(checkCollision(x,y)[1], 1);
-        bleep.play();
+        sounds[0].play();
     }
 
-    //on mine or snake collision, game over
+    //if tile targeted by current move is inhibited by an enemy, mine or snake - game over
     if (checkCollision(x,y) == "snakeCollision") {
-        hurt.play();
+        sounds[2].play();
         gameOver();
         return;
     } else if (checkCollision(x,y) == "mineCollision") {
-        boom.play();
+        sounds[1].play();
         gameOver();
         return;
     } else if (checkCollision(x,y) == "enemyCollision") {
-        shoot.play();
+        sounds[3].play();
         gameOver();
         return;
     }
@@ -251,7 +249,7 @@ function checkCollision(a, b) {
         };
     });
 
-    //additionally returns index of found apple, so it can be easily removed from array within moveSnake()
+    //additionally returns index of found apple, so it can be easily removed from appleTiles from within moveSnake()
     appleTiles.forEach((tile) => {
         if (tile.x == a && tile.y == b) {
             event = ["appleCollision", appleTiles.indexOf(tile)];
@@ -270,7 +268,7 @@ function checkCollision(a, b) {
         }
     });
 
-    //returns the appropriate collision, if any was found, or moveOn if not
+    //returns the appropriate collision, if any was found, or "moveOn" if not
     return event;
 }
 
@@ -378,17 +376,12 @@ function toggleCustomSetup() {
     document.querySelector("#customwrapper").classList.toggle('show');
 }
 
-//consider creating an Array with all sounds to iterate over for the toggle
 function toggleSounds() {
-    if (bleep.muted == true) {
-        bleep.muted = false;
-        boom.muted = false;
-        hurt.muted = false;
-        shoot.muted = false;
-    } else {
-        bleep.muted = true;
-        boom.muted = true;
-        hurt.muted = true;
-        shoot.muted = true;
-    }
+    sounds.forEach((sound) => {
+        if (sound.muted == true) {
+            sound.muted = false;
+        } else {
+            sound.muted = true;
+        };
+    });
 }
