@@ -35,7 +35,15 @@ let mineInt;
 let demineInt;
 let enemyInt;
 let difficulty = 2;
-let sounds = [new Audio("./bleep.mp3"), new Audio("./boom.mp3"), new Audio("./hurt.mp3"), new Audio("./shoot.mp3")];
+const sounds = [new Audio("./bleep.mp3"), new Audio("./boom.mp3"), new Audio("./hurt.mp3"), new Audio("./shoot.mp3")];
+const brickImg = new Image();
+brickImg.src = "./bricks.png";
+const mineImg = new Image();
+mineImg.src = "./landmine.png";
+const appleImg = new Image();
+appleImg.src = "./apple.png";
+const spiderImg = new Image();
+spiderImg.src = "./spider.png";
 let maxMines;
 let enemyAmount;
 let wallAmount;
@@ -63,7 +71,7 @@ function startGame() {
     mineTiles = [];
     enemyTiles = [];
     wallTiles = [];
-    direction = "left";
+    snakeDirection = "left";
     lastMove = "left";
     clearInterval(snakeInt);
     clearInterval(appleInt);
@@ -77,10 +85,10 @@ function startGame() {
     //initial snake figure generation
     snake.fillStyle = "#2aa4cd";
     for (let j=0; j<=3; j++) {
-        let x = 321 + j * 20;
-        let y = 321;
-        snake.fillRect(x, y, 20, 20);
-        snakeTiles.push({x: x, y: y});
+        let snakeX = 321 + j * 20;
+        let snakeY = 321;
+        snake.fillRect(snakeX, snakeY, 20, 20);
+        snakeTiles.push({x: snakeX, y: snakeY});
     }
     
     //initialize movement and item spawns
@@ -150,83 +158,83 @@ document.onkeydown = (e) => {
         case "ArrowLeft":
         case "a":
             if(lastMove != "right") {
-                direction = "left";
+                snakeDirection = "left";
             }
             break;
         case "ArrowRight":
         case "d":
             if(lastMove != "left") {
-                direction = "right";
+                snakeDirection = "right";
             }
             break;
         case "ArrowUp":
         case "w":
             if(lastMove != "down") {
-                direction = "up";
+                snakeDirection = "up";
             }
             break;
         case "ArrowDown":
         case "s":
             if(lastMove != "up") {
-                direction = "down";
+                snakeDirection = "down";
             }
             break;
     }
 }
 
 function moveSnake() {
-    let x = snakeTiles[0].x;
-    let y = snakeTiles[0].y;
+    let snakeX = snakeTiles[0].x;
+    let snakeY = snakeTiles[0].y;
 
     //determin location of next tile, save movement direction for 180° check
-    if (direction == "left") {
+    if (snakeDirection == "left") {
         lastMove = "left";
-        x = x-20;
-        if (x == -19) {
-            x = 621;
+        snakeX = snakeX-20;
+        if (snakeX == -19) {
+            snakeX = 621;
         }
-    } else if (direction == "right") {
+    } else if (snakeDirection == "right") {
         lastMove = "right";
-        x = x+20;
-        if (x == 641) {
-            x = 1;
+        snakeX = snakeX+20;
+        if (snakeX == 641) {
+            snakeX = 1;
         }
-    } else if (direction == "up") {
+    } else if (snakeDirection == "up") {
         lastMove = "up";
-        y = y-20;
-        if (y == -19) {
-            y = 621;
+        snakeY = snakeY-20;
+        if (snakeY == -19) {
+            snakeY = 621;
         }
-    } else if (direction == "down") {
+    } else if (snakeDirection == "down") {
         lastMove = "down";
-        y = y+20;
-        if (y == 641) {
-            y = 1;
+        snakeY = snakeY+20;
+        if (snakeY == 641) {
+            snakeY = 1;
         }
     }
 
     //remove oldest snake tile if no apple is eaten this turn
-    if (checkCollision(x,y)[0] != "appleCollision") {
-        let a = snakeTiles[snakeTiles.length - 1].x;
-        let b = snakeTiles[snakeTiles.length - 1].y;
+    if (checkCollision(snakeX,snakeY)[0] != "appleCollision") {
+        let snakeA = snakeTiles[snakeTiles.length - 1].x;
+        let snakeB = snakeTiles[snakeTiles.length - 1].y;
         snake.fillStyle = "#3c3c3c";
-        snake.fillRect(a, b, 20, 20);
+        snake.fillRect(snakeA, snakeB, 20, 20);
         snakeTiles.pop();
     } else {
-        appleTiles.splice(checkCollision(x,y)[1], 1);
+        appleTiles.splice(checkCollision(snakeX,snakeY)[1], 1);
         sounds[0].play();
     }
 
     //if tile targeted by current move is inhibited by an enemy, mine or snake - game over
-    if (checkCollision(x,y) == "snakeCollision" || checkCollision(x,y) == "wallCollision") {
+    if (checkCollision(snakeX,snakeY) == "snakeCollision" || checkCollision(snakeX,snakeY) == "wallCollision") {
         sounds[2].play();
         gameOver();
         return;
-    } else if (checkCollision(x,y) == "mineCollision") {
+    } else if (checkCollision(snakeX,snakeY) == "mineCollision") {
         sounds[1].play();
         gameOver();
         return;
-    } else if (checkCollision(x,y) == "enemyCollision") {
+    } else if (checkCollision(snakeX,snakeY) == "enemyCollision") {
         sounds[3].play();
         gameOver();
         return;
@@ -234,54 +242,53 @@ function moveSnake() {
 
     //add new snake tile ahead
     snake.fillStyle = "#2aa4cd";
-    snake.fillRect(x, y, 20, 20);
-    snakeTiles.unshift({x: x, y: y});
+    snake.fillRect(snakeX, snakeY, 20, 20);
+    snakeTiles.unshift({x: snakeX, y: snakeY});
 }
 
 function spawnApple() {
-    let x,y;
+    let appleX,appleY;
 
     //select random tiles until a vacant tile is found
     do {
-        x = Math.floor(Math.random()*32)*20+1;
-        y = Math.floor(Math.random()*32)*20+1;
-    } while (checkCollision(x,y) != "moveOn");
+        appleX = Math.floor(Math.random()*32)*20+1;
+        appleY = Math.floor(Math.random()*32)*20+1;
+    } while (checkCollision(appleX,appleY) != "moveOn");
 
-    apple.fillStyle = "#a2c037";
-    apple.fillRect(x, y, 20, 20);
-    appleTiles.push({x: x, y: y});
+    apple.drawImage(appleImg, appleX, appleY, 20, 20);
+    appleTiles.push({x: appleX, y: appleY});
 }
 
-function checkCollision(a, b) {
+function checkCollision(collX, collY) {
     let event = "moveOn";
 
     snakeTiles.forEach((tile) => {
-        if (tile.x == a && tile.y == b) {
+        if (tile.x == collX && tile.y == collY) {
             event = "snakeCollision";
         };
     });
 
     //additionally returns index of found apple, so it can be easily removed from appleTiles from within moveSnake()
     appleTiles.forEach((tile) => {
-        if (tile.x == a && tile.y == b) {
+        if (tile.x == collX && tile.y == collY) {
             event = ["appleCollision", appleTiles.indexOf(tile)];
         };
     });
 
     mineTiles.forEach((tile) => {
-        if (tile.x == a && tile.y == b) {
+        if (tile.x == collX && tile.y == collY) {
             event = "mineCollision";
         };
     });
 
     enemyTiles.forEach((tile) => {
-        if (tile.x == a && tile.y == b) {
+        if (tile.x == collX && tile.y == collY) {
             event = "enemyCollision";
         }
     });
 
     wallTiles.forEach((tile) => {
-        if (tile.x == a && tile.y == b) {
+        if (tile.x == collX && tile.y == collY) {
             event = "wallCollision";
         }
     })
@@ -291,128 +298,114 @@ function checkCollision(a, b) {
 }
 
 function spawnMine() {
-    let x,y;
+    let mineX,mineY;
 
     if (mineTiles.length < maxMines) {
         //select random tiles, until free tile is found
         do {
-            x = Math.floor(Math.random()*32)*20+1;
-            y = Math.floor(Math.random()*32)*20+1;
-        } while (checkCollision(x,y) != "moveOn");
+            mineX = Math.floor(Math.random()*32)*20+1;
+            mineY = Math.floor(Math.random()*32)*20+1;
+        } while (checkCollision(mineX,mineY) != "moveOn");
         
         //prevent Mines from spawning less than 5 tiles ahead from snake head in recent moving direction
             //consider doing this within the do-while-loop to prevent skipping mine spawn
-        if((direction == "left" && y == snakeTiles[0].y && x > (snakeTiles[0].x - 100) && x < snakeTiles.x) ||
-        (direction == "right" && y == snakeTiles[0].y && x < (snakeTiles[0].x + 100) && x > snakeTiles.x) ||
-        (direction == "up" && x == snakeTiles[0].x && y > (snakeTiles[0].y - 100) && y < snakeTiles.y) ||
-        (direction == "down" && x == snakeTiles[0].x && y < (snakeTiles[0].y + 100) && y > snakeTiles.y)) {
+        if((direction == "left" && mineY == snakeTiles[0].y && mineX > (snakeTiles[0].x - 100) && mineX < snakeTiles[0].x) ||
+        (direction == "right" && mineY == snakeTiles[0].y && mineX < (snakeTiles[0].x + 100) && mineX > snakeTiles[0].x) ||
+        (direction == "up" && mineX == snakeTiles[0].x && mineY > (snakeTiles[0].y - 100) && mineY < snakeTiles[0].y) ||
+        (direction == "down" && mineX == snakeTiles[0].x && mineY < (snakeTiles[0].y + 100) && mineY > snakeTiles[0].y)) {
             return;
         };
 
-        mine.fillStyle = "red";
-        mine.fillRect(x, y, 20, 20);
-        mineTiles.push({x: x, y: y});
+        mine.drawImage(mineImg, mineX, mineY, 20, 20);
+        mineTiles.push({x: mineX, y: mineY});
     }
 }
 
 function despawnMine() {
-    let a = mineTiles[0].x;
-    let b = mineTiles[0].y;
+    let demineX = mineTiles[0].x;
+    let demineY = mineTiles[0].y;
     mine.fillStyle = "#3c3c3c";
-    mine.fillRect(a, b, 20, 20);
+    mine.fillRect(demineX, demineY, 20, 20);
     mineTiles.shift();
 }
 
 function spawnEnemy() {
-    let x, y;
+    let enemyX, enemyY;
 
     //select random tiles, until free tile is found, exclude tiles in starting line of player snake
     do {
-        x = Math.floor(Math.random()*32)*20+1;
-        y = Math.floor(Math.random()*32)*20+1;
-    } while (checkCollision(x,y) != "moveOn" || y == 321);
-
-    enemy.fillStyle = "orange";
-    enemy.fillRect(x, y, 20, 20);
-    enemyTiles.push({x: x, y: y});
+        enemyX = Math.floor(Math.random()*32)*20+1;
+        enemyY = Math.floor(Math.random()*32)*20+1;
+    } while (checkCollision(enemyX,enemyY) != "moveOn" || enemyY == 321);
+    
+    enemy.drawImage(spiderImg, enemyX, enemyY, 20, 20);
+    enemyTiles.push({x: enemyX, y: enemyY});
 }
 
 function moveEnemy() {
     enemyTiles.forEach((tango) => {
-        let x = tango.x;
-        let y = tango.y;
+        let enemyX = tango.x;
+        let enemyY = tango.y;
 
-        let c = Math.floor(Math.random()*8);
+        let enemyDirection = Math.floor(Math.random()*8);
         let enemyMoved = false;
-        enemy.fillStyle = "orange";
 
         //50% chance to move, on move have equal chance to move in any of the 4 directions, only move if no collision, not allowed to warp to opposite side
-        if (c==0 && checkCollision(x-20,y) == "moveOn" && x>1) {
-            enemy.fillRect(x-20, y, 20, 20);
-            tango.x = x-20;
+        if (enemyDirection==0 && checkCollision(enemyX-20,enemyY) == "moveOn" && enemyX>1) {
+            enemy.drawImage(spiderImg, enemyX-20, enemyY, 20, 20);
+            tango.x = enemyX-20;
             enemyMoved = true;
-        } else if (c==1 && checkCollision(x+20,y) == "moveOn" && x<621) {
-            enemy.fillRect(x+20, y, 20, 20);
-            tango.x = x+20;
+        } else if (enemyDirection==1 && checkCollision(enemyX+20,enemyY) == "moveOn" && enemyX<621) {
+            enemy.drawImage(spiderImg, enemyX+20, enemyY, 20, 20);
+            tango.x = enemyX+20;
             enemyMoved = true;
-        } else if (c==2 && checkCollision(x,y-20) == "moveOn" && y>1) {
-            enemy.fillRect(x, y-20, 20, 20);
-            tango.y = y-20;
+        } else if (enemyDirection==2 && checkCollision(enemyX,enemyY-20) == "moveOn" && enemyY>1) {
+            enemy.drawImage(spiderImg, enemyX, enemyY-20, 20, 20);
+            tango.y = enemyY-20;
             enemyMoved = true;
-        } else if (c==3 && checkCollision(x,y+20) == "moveOn" && y<621) {
-            enemy.fillRect(x, y+20, 20, 20);
-            tango.y = y+20;
+        } else if (enemyDirection==3 && checkCollision(enemyX,enemyY+20) == "moveOn" && enemyY<621) {
+            enemy.drawImage(spiderImg, enemyX, enemyY+20, 20, 20);
+            tango.y = enemyY+20;
             enemyMoved = true;
         };
 
         if (enemyMoved == true) {
         enemy.fillStyle = "#3c3c3c";
-        enemy.fillRect(x, y, 20, 20);
+        enemy.fillRect(enemyX, enemyY, 20, 20);
         };
     });
 }
 
 function spawnWall() {
-    let direction = Math.floor(Math.random()*2);
+    let wallDirection = Math.floor(Math.random()*2);
+    let wallX, wallY;
 
-    if (direction == 0) {
+    if (wallDirection == 0) {
         do {
-            x = Math.floor(Math.random()*32)*20+1;
-            y = Math.floor(Math.random()*32)*20+1;
-        } while (checkCollision(x,y) != "moveOn" || (y >= 281 && y <= 321) || y >= 581);
+            wallX = Math.floor(Math.random()*32)*20+1;
+            wallY = Math.floor(Math.random()*32)*20+1;
+        } while (checkCollision(wallX,wallY) != "moveOn" || (wallY >= 281 && wallY <= 321) || wallY >= 581);
 
-        const bricks = wall.createLinearGradient(x, y, x+20, y);
-        bricks.addColorStop(0, "gray");
-        bricks.addColorStop(0.5, "black");
-        bricks.addColorStop(1, "gray");
+        wall.drawImage(brickImg, wallX, wallY, 20, 20);
+        wall.drawImage(brickImg, wallX, wallY+20, 20, 20);
+        wall.drawImage(brickImg, wallX, wallY+40, 20, 20);
 
-        wall.fillStyle = bricks;
-        wall.fillRect(x, y, 20, 20);
-        wall.fillRect(x, y+20, 20, 20);
-        wall.fillRect(x, y+40, 20, 20);
-
-        wallTiles.push({x: x, y: y});
-        wallTiles.push({x: x, y: y+20});
-        wallTiles.push({x: x, y: y+40});
-    } else if (direction == 1) {
+        wallTiles.push({x: wallX, y: wallY});
+        wallTiles.push({x: wallX, y: wallY+20});
+        wallTiles.push({x: wallX, y: wallY+40});
+    } else if (wallDirection == 1) {
         do {
-            x = Math.floor(Math.random()*32)*20+1;
-            y = Math.floor(Math.random()*32)*20+1;
-        } while (checkCollision(x,y) != "moveOn" || y == 321 || x >= 581);
+            wallX = Math.floor(Math.random()*32)*20+1;
+            wallY = Math.floor(Math.random()*32)*20+1;
+        } while (checkCollision(wallX,wallY) != "moveOn" || wallY == 321 || wallX >= 581);
 
-        const bricks = wall.createLinearGradient(x, y, x, y+20);
-        bricks.addColorStop(0, "gray");
-        bricks.addColorStop(0.5, "black");
-        bricks.addColorStop(1, "gray");
+        wall.drawImage(brickImg, wallX, wallY, 20, 20);
+        wall.drawImage(brickImg, wallX+20, wallY, 20, 20);
+        wall.drawImage(brickImg, wallX+40, wallY, 20, 20);
 
-        wall.fillStyle = bricks;
-        wall.fillRect(x, y, 20, 20);
-        wall.fillRect(x+20, y, 20, 20);
-        wall.fillRect(x+40, y, 20, 20);
-
-        wallTiles.push({x: x, y: y});
-        wallTiles.push({x: x+20, y: y});
-        wallTiles.push({x: x+40, y: y});
+        wallTiles.push({x: wallX, y: wallY});
+        wallTiles.push({x: wallX+20, y: wallY});
+        wallTiles.push({x: wallX+40, y: wallY});
     }
 }
 
