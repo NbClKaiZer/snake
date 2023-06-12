@@ -2,8 +2,9 @@
 - add 1-tile enemies DONE
 - allow enemies to randomly move to free tiles, if available DONE
 - game over on enemy collision DONE
-- add solid, impassable walls (entire tiles for now, maybe 2px borders later)
-- game over on wall collision
+- add solid, impassable walls (entire tiles for now, maybe 2px borders later) DONE
+- game over on wall collision DONE
+- add graphics for walls, apples, mines and 1-tile enemies
 - add enemy 4-tile snakes
 - make enemy snakes look for free tiles in movement direction
 - have enemy snakes die when no free tile is available for their next move
@@ -11,7 +12,6 @@
 - game over on collision with enemy snake
 - add adventure mode
 - add the first 5 pre-made levels and challenges
-- add graphics for apples, mines and 1-tile enemies
 */
 
 //consider reducing number of global variables by grouping some into arrays
@@ -21,10 +21,12 @@ const snake = board.getContext("2d");
 const apple = board.getContext("2d");
 const mine = board.getContext("2d");
 const enemy = board.getContext("2d");
+const wall = board.getContext("2d");
 let snakeTiles = [];
 let appleTiles = [];
 let mineTiles = [];
 let enemyTiles = [];
+let wallTiles = [];
 let direction = "left";
 let lastMove = "left";
 let snakeInt;
@@ -36,6 +38,7 @@ let difficulty = 2;
 let sounds = [new Audio("./bleep.mp3"), new Audio("./boom.mp3"), new Audio("./hurt.mp3"), new Audio("./shoot.mp3")];
 let maxMines;
 let enemyAmount;
+let wallAmount;
 
 //Debug-Grid generator
 /*for (let i=1; i<=641; i+=20) {
@@ -59,6 +62,7 @@ function startGame() {
     appleTiles = [];
     mineTiles = [];
     enemyTiles = [];
+    wallTiles = [];
     direction = "left";
     lastMove = "left";
     clearInterval(snakeInt);
@@ -90,6 +94,7 @@ function startGame() {
         mineInt = setInterval(spawnMine, 10000);
         demineInt = setInterval(despawnMine, 12000);
         maxMines = 10;
+        wallAmount = 2;
     } else if  (difficulty == 2) {
         snakeInt = setInterval(moveSnake, 150);
         appleInt = setInterval(spawnApple, 4500);
@@ -97,6 +102,7 @@ function startGame() {
         demineInt = setInterval(despawnMine, 12000);
         enemyInt = setInterval(moveEnemy, 500);
         maxMines = 20;
+        wallAmount = 5;
         enemyAmount = 1;
     } else if  (difficulty == 3) {
         snakeInt = setInterval(moveSnake, 100);
@@ -105,6 +111,7 @@ function startGame() {
         demineInt = setInterval(despawnMine, 12000);
         enemyInt = setInterval(moveEnemy, 300);
         maxMines = 30;
+        wallAmount = 10;
         enemyAmount = 3;
     } else if  (difficulty == 4) {
         snakeInt = setInterval(moveSnake, 75);
@@ -113,6 +120,7 @@ function startGame() {
         demineInt = setInterval(despawnMine, 15000);
         enemyInt = setInterval(moveEnemy, 100);
         maxMines = 50;
+        wallAmount = 15;
         enemyAmount = 5;
     } else if (difficulty == 'custom') {
         document.querySelector("#customconfirm").classList.add('show');
@@ -122,6 +130,7 @@ function startGame() {
         demineInt = setInterval(despawnMine, document.querySelector("#demineInt").value);
         enemyInt = setInterval(moveEnemy, document.querySelector("#enemyInt").value);
         maxMines = document.querySelector("#maxMines").value;
+        wallAmount = document.querySelector("#wallAmount").value;
         enemyAmount = document.querySelector("#enemyAmount").value;
     }
 
@@ -129,6 +138,9 @@ function startGame() {
     spawnApple();
     for (let i=0; i<enemyAmount; i++) {
         spawnEnemy();
+    }
+    for (let j=0; j<wallAmount; j++) {
+        spawnWall();
     }
 }
 
@@ -206,7 +218,7 @@ function moveSnake() {
     }
 
     //if tile targeted by current move is inhibited by an enemy, mine or snake - game over
-    if (checkCollision(x,y) == "snakeCollision") {
+    if (checkCollision(x,y) == "snakeCollision" || checkCollision(x,y) == "wallCollision") {
         sounds[2].play();
         gameOver();
         return;
@@ -267,6 +279,12 @@ function checkCollision(a, b) {
             event = "enemyCollision";
         }
     });
+
+    wallTiles.forEach((tile) => {
+        if (tile.x == a && tile.y == b) {
+            event = "wallCollision";
+        }
+    })
 
     //returns the appropriate collision, if any was found, or "moveOn" if not
     return event;
@@ -352,6 +370,50 @@ function moveEnemy() {
         enemy.fillRect(x, y, 20, 20);
         };
     });
+}
+
+function spawnWall() {
+    let direction = Math.floor(Math.random()*2);
+
+    if (direction == 0) {
+        do {
+            x = Math.floor(Math.random()*32)*20+1;
+            y = Math.floor(Math.random()*32)*20+1;
+        } while (checkCollision(x,y) != "moveOn" || (y >= 281 && y <= 321) || y >= 581);
+
+        const bricks = wall.createLinearGradient(x, y, x+20, y);
+        bricks.addColorStop(0, "gray");
+        bricks.addColorStop(0.5, "black");
+        bricks.addColorStop(1, "gray");
+
+        wall.fillStyle = bricks;
+        wall.fillRect(x, y, 20, 20);
+        wall.fillRect(x, y+20, 20, 20);
+        wall.fillRect(x, y+40, 20, 20);
+
+        wallTiles.push({x: x, y: y});
+        wallTiles.push({x: x, y: y+20});
+        wallTiles.push({x: x, y: y+40});
+    } else if (direction == 1) {
+        do {
+            x = Math.floor(Math.random()*32)*20+1;
+            y = Math.floor(Math.random()*32)*20+1;
+        } while (checkCollision(x,y) != "moveOn" || y == 321 || x >= 581);
+
+        const bricks = wall.createLinearGradient(x, y, x, y+20);
+        bricks.addColorStop(0, "gray");
+        bricks.addColorStop(0.5, "black");
+        bricks.addColorStop(1, "gray");
+
+        wall.fillStyle = bricks;
+        wall.fillRect(x, y, 20, 20);
+        wall.fillRect(x+20, y, 20, 20);
+        wall.fillRect(x+40, y, 20, 20);
+
+        wallTiles.push({x: x, y: y});
+        wallTiles.push({x: x+20, y: y});
+        wallTiles.push({x: x+40, y: y});
+    }
 }
 
 function gameOver() {
