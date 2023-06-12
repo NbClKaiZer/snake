@@ -16,17 +16,40 @@
 
 const board = document.querySelector("#board");
 const canvasDraw = board.getContext("2d");
-const usedTiles = {};
+
+const usedTiles = {
+    snake: [],
+    apple: [],
+    mine: [],
+    enemy: [],
+    wall: []
+};
+
 let direction = "left";
 let lastMove = "left";
-const gameSetup = {};
-gameSetup.difficulty = 2;
-const sounds = [new Audio("./bleep.mp3"), new Audio("./boom.mp3"), new Audio("./hurt.mp3"), new Audio("./shoot.mp3")];
-const images = [new Image(), new Image(), new Image(), new Image()];
-images[0].src = "./bricks.png";
-images[1].src = "./landmine.png";
-images[2].src = "./apple.png";
-images[3].src = "./spider.png";
+
+const gameSetup = {
+    difficulty: 2
+};
+
+const sounds = {
+    bleep: new Audio("./bleep.mp3"),
+    boom: new Audio("./boom.mp3"),
+    hurt: new Audio("./hurt.mp3"),
+    shoot: new Audio("./shoot.mp3")
+};
+sounds.bleep.volume = 0.5;
+
+const images = {
+    bricks: new Image(),
+    landmine: new Image(),
+    apple: new Image(),
+    spider: new Image()
+};
+images.bricks.src = "./bricks.png";
+images.landmine.src = "./landmine.png";
+images.apple.src = "./apple.png";
+images.spider.src = "./spider.png";
 
 //board outer border
 canvasDraw.rect(0, 0, 642, 642);
@@ -36,19 +59,15 @@ canvasDraw.fillStyle= "#3c3c3c"
 canvasDraw.fillRect(1, 1, 640, 640);
 
 function startGame() {
-    //reset tile arrays, move direction, intervals and board
-    usedTiles.snake = [];
-    usedTiles.apple = [];
-    usedTiles.mine = [];
-    usedTiles.enemy = [];
-    usedTiles.wall = [];
+    //reset tile arrays, intervals, move direction and board
+    Object.keys(usedTiles).forEach((tileCat) => {
+        usedTiles[tileCat] = [];
+    });
+    Object.keys(gameSetup).forEach ((interval) => {
+        clearInterval(gameSetup[interval]);
+    });
     snakeDirection = "left";
     lastMove = "left";
-    clearInterval(gameSetup.snakeInt);
-    clearInterval(gameSetup.appleInt);
-    clearInterval(gameSetup.mineInt);
-    clearInterval(gameSetup.demineInt);
-    clearInterval(gameSetup.enemyInt);
     canvasDraw.fillStyle= "#3c3c3c"
     canvasDraw.fillRect(1, 1, 640, 640);
     document.querySelector("#customconfirm").classList.remove('show');
@@ -60,20 +79,21 @@ function startGame() {
         let snakeY = 321;
         canvasDraw.fillRect(snakeX, snakeY, 20, 20);
         usedTiles.snake.push({x: snakeX, y: snakeY});
-    }
+    };
     
-    //initialize movement and item spawns
+    //initialize game setup
     if (gameSetup.difficulty == 0) {
         gameSetup.snakeInt = setInterval(moveSnake, 250);
         gameSetup.appleInt = setInterval(spawnApple, 7500);
         gameSetup.maxMines = 0;
+        gameSetup.wallAmount = 0;
     } else if (gameSetup.difficulty == 1) {
         gameSetup.snakeInt = setInterval(moveSnake, 200);
         gameSetup.appleInt = setInterval(spawnApple, 6000);
         gameSetup.mineInt = setInterval(spawnMine, 10000);
         gameSetup.demineInt = setInterval(despawnMine, 12000);
         gameSetup.maxMines = 10;
-        gameSetup.wallAmount = 2;
+        gameSetup.wallAmount = 5;
     } else if  (gameSetup.difficulty == 2) {
         gameSetup.snakeInt = setInterval(moveSnake, 150);
         gameSetup.appleInt = setInterval(spawnApple, 4500);
@@ -81,7 +101,7 @@ function startGame() {
         gameSetup.demineInt = setInterval(despawnMine, 12000);
         gameSetup.enemyInt = setInterval(moveEnemy, 500);
         gameSetup.maxMines = 20;
-        gameSetup.wallAmount = 5;
+        gameSetup.wallAmount = 10;
         gameSetup.enemyAmount = 1;
     } else if  (gameSetup.difficulty == 3) {
         gameSetup.snakeInt = setInterval(moveSnake, 100);
@@ -90,7 +110,7 @@ function startGame() {
         gameSetup.demineInt = setInterval(despawnMine, 12000);
         gameSetup.enemyInt = setInterval(moveEnemy, 300);
         gameSetup.maxMines = 30;
-        gameSetup.wallAmount = 10;
+        gameSetup.wallAmount = 20;
         gameSetup.enemyAmount = 3;
     } else if  (gameSetup.difficulty == 4) {
         gameSetup.snakeInt = setInterval(moveSnake, 75);
@@ -99,7 +119,7 @@ function startGame() {
         gameSetup.demineInt = setInterval(despawnMine, 15000);
         gameSetup.enemyInt = setInterval(moveEnemy, 100);
         gameSetup.maxMines = 50;
-        gameSetup.wallAmount = 15;
+        gameSetup.wallAmount = 30;
         gameSetup.enemyAmount = 5;
     } else if (gameSetup.difficulty == 'custom') {
         document.querySelector("#customconfirm").classList.add('show');
@@ -111,17 +131,17 @@ function startGame() {
         gameSetup.maxMines = document.querySelector("#maxMines").value;
         gameSetup.wallAmount = document.querySelector("#wallAmount").value;
         gameSetup.enemyAmount = document.querySelector("#enemyAmount").value;
-    }
+    };
 
     //spawn initial nonplayer-objects
-    for (let k=0; k<gameSetup.wallAmount; k++) {
+    for (let j=0; j<gameSetup.wallAmount; j++) {
         spawnWall();
-    }
+    };
     spawnApple();
-    for (let j=0; j<gameSetup.enemyAmount; j++) {
+    for (let k=0; k<gameSetup.enemyAmount; k++) {
         spawnEnemy();
-    }
-}
+    };
+};
 
 //basic controls w,a,s,d and arrow keys, checks for and blocks 180° turns
 document.onkeydown = (e) => {
@@ -130,28 +150,28 @@ document.onkeydown = (e) => {
         case "a":
             if(lastMove != "right") {
                 snakeDirection = "left";
-            }
+            };
             break;
         case "ArrowRight":
         case "d":
             if(lastMove != "left") {
                 snakeDirection = "right";
-            }
+            };
             break;
         case "ArrowUp":
         case "w":
             if(lastMove != "down") {
                 snakeDirection = "up";
-            }
+            };
             break;
         case "ArrowDown":
         case "s":
             if(lastMove != "up") {
                 snakeDirection = "down";
-            }
+            };
             break;
-    }
-}
+    };
+};
 
 function moveSnake() {
     let snakeX = usedTiles.snake[0].x;
@@ -163,41 +183,41 @@ function moveSnake() {
         snakeX = snakeX-20;
         if (snakeX == -19) {
             snakeX = 621;
-        }
+        };
     } else if (snakeDirection == "right") {
         lastMove = "right";
         snakeX = snakeX+20;
         if (snakeX == 641) {
             snakeX = 1;
-        }
+        };
     } else if (snakeDirection == "up") {
         lastMove = "up";
         snakeY = snakeY-20;
         if (snakeY == -19) {
             snakeY = 621;
-        }
+        };
     } else if (snakeDirection == "down") {
         lastMove = "down";
         snakeY = snakeY+20;
         if (snakeY == 641) {
             snakeY = 1;
-        }
-    }
+        };
+    };
 
     //if tile targeted by current move is inhibited by an enemy, mine or snake - game over
     if (checkCollision(snakeX,snakeY) == "snakeCollision" || checkCollision(snakeX,snakeY) == "wallCollision") {
-        sounds[2].play();
+        sounds.hurt.play();
         gameOver();
         return;
     } else if (checkCollision(snakeX,snakeY) == "mineCollision") {
-        sounds[1].play();
+        sounds.boom.play();
         gameOver();
         return;
     } else if (checkCollision(snakeX,snakeY) == "enemyCollision") {
-        sounds[3].play();
+        sounds.shoot.play();
         gameOver();
         return;
-    }
+    };
 
     //remove oldest snake tile if no apple is eaten this turn
     if (checkCollision(snakeX,snakeY)[0] != "appleCollision") {
@@ -208,14 +228,14 @@ function moveSnake() {
         usedTiles.snake.pop();
     } else {
         usedTiles.apple.splice(checkCollision(snakeX,snakeY)[1], 1);
-        sounds[0].play();
-    }
+        sounds.bleep.play();
+    };
 
     //add new snake tile ahead
     canvasDraw.fillStyle = "#2aa4cd";
     canvasDraw.fillRect(snakeX, snakeY, 20, 20);
     usedTiles.snake.unshift({x: snakeX, y: snakeY});
-}
+};
 
 function spawnApple() {
     let appleX,appleY;
@@ -226,9 +246,9 @@ function spawnApple() {
         appleY = Math.floor(Math.random()*32)*20+1;
     } while (checkCollision(appleX,appleY) != "moveOn");
 
-    canvasDraw.drawImage(images[2], appleX, appleY, 20, 20);
+    canvasDraw.drawImage(images.apple, appleX, appleY, 20, 20);
     usedTiles.apple.push({x: appleX, y: appleY});
-}
+};
 
 function checkCollision(collX, collY) {
     let event = "moveOn";
@@ -255,18 +275,18 @@ function checkCollision(collX, collY) {
     usedTiles.enemy.forEach((tile) => {
         if (tile.x == collX && tile.y == collY) {
             event = "enemyCollision";
-        }
+        };
     });
 
     usedTiles.wall.forEach((tile) => {
         if (tile.x == collX && tile.y == collY) {
             event = "wallCollision";
-        }
-    })
+        };
+    });
 
     //returns the appropriate collision, if any was found, or "moveOn" if not
     return event;
-}
+};
 
 function spawnMine() {
     let mineX,mineY;
@@ -287,10 +307,10 @@ function spawnMine() {
             return;
         };
 
-        canvasDraw.drawImage(images[1], mineX, mineY, 20, 20);
+        canvasDraw.drawImage(images.landmine, mineX, mineY, 20, 20);
         usedTiles.mine.push({x: mineX, y: mineY});
-    }
-}
+    };
+};
 
 function despawnMine() {
     let demineX = usedTiles.mine[0].x;
@@ -298,7 +318,7 @@ function despawnMine() {
     canvasDraw.fillStyle = "#3c3c3c";
     canvasDraw.fillRect(demineX, demineY, 20, 20);
     usedTiles.mine.shift();
-}
+};
 
 function spawnEnemy() {
     let enemyX, enemyY;
@@ -309,9 +329,9 @@ function spawnEnemy() {
         enemyY = Math.floor(Math.random()*32)*20+1;
     } while (checkCollision(enemyX,enemyY) != "moveOn" || enemyY == 321);
     
-    canvasDraw.drawImage(images[3], enemyX, enemyY, 20, 20);
+    canvasDraw.drawImage(images.spider, enemyX, enemyY, 20, 20);
     usedTiles.enemy.push({x: enemyX, y: enemyY});
-}
+};
 
 function moveEnemy() {
     usedTiles.enemy.forEach((tango) => {
@@ -323,19 +343,19 @@ function moveEnemy() {
 
         //50% chance to move, on move have equal chance to move in any of the 4 directions, only move if no collision, not allowed to warp to opposite side
         if (enemyDirection==0 && checkCollision(enemyX-20,enemyY) == "moveOn" && enemyX>1) {
-            canvasDraw.drawImage(images[3], enemyX-20, enemyY, 20, 20);
+            canvasDraw.drawImage(images.spider, enemyX-20, enemyY, 20, 20);
             tango.x = enemyX-20;
             enemyMoved = true;
         } else if (enemyDirection==1 && checkCollision(enemyX+20,enemyY) == "moveOn" && enemyX<621) {
-            canvasDraw.drawImage(images[3], enemyX+20, enemyY, 20, 20);
+            canvasDraw.drawImage(images.spider, enemyX+20, enemyY, 20, 20);
             tango.x = enemyX+20;
             enemyMoved = true;
         } else if (enemyDirection==2 && checkCollision(enemyX,enemyY-20) == "moveOn" && enemyY>1) {
-            canvasDraw.drawImage(images[3], enemyX, enemyY-20, 20, 20);
+            canvasDraw.drawImage(images.spider, enemyX, enemyY-20, 20, 20);
             tango.y = enemyY-20;
             enemyMoved = true;
         } else if (enemyDirection==3 && checkCollision(enemyX,enemyY+20) == "moveOn" && enemyY<621) {
-            canvasDraw.drawImage(images[3], enemyX, enemyY+20, 20, 20);
+            canvasDraw.drawImage(images.spider, enemyX, enemyY+20, 20, 20);
             tango.y = enemyY+20;
             enemyMoved = true;
         };
@@ -345,21 +365,22 @@ function moveEnemy() {
         canvasDraw.fillRect(enemyX, enemyY, 20, 20);
         };
     });
-}
+};
 
 function spawnWall() {
     let wallDirection = Math.floor(Math.random()*2);
     let wallX, wallY;
 
+    //walls have 3 tiles each and can run across or down, but will never spawn in the starting line
     if (wallDirection == 0) {
         do {
             wallX = Math.floor(Math.random()*32)*20+1;
             wallY = Math.floor(Math.random()*32)*20+1;
         } while (checkCollision(wallX,wallY) != "moveOn" || (wallY >= 281 && wallY <= 321) || wallY >= 581);
 
-        canvasDraw.drawImage(images[0], wallX, wallY, 20, 20);
-        canvasDraw.drawImage(images[0], wallX, wallY+20, 20, 20);
-        canvasDraw.drawImage(images[0], wallX, wallY+40, 20, 20);
+        canvasDraw.drawImage(images.bricks, wallX, wallY, 20, 20);
+        canvasDraw.drawImage(images.bricks, wallX, wallY+20, 20, 20);
+        canvasDraw.drawImage(images.bricks, wallX, wallY+40, 20, 20);
 
         usedTiles.wall.push({x: wallX, y: wallY});
         usedTiles.wall.push({x: wallX, y: wallY+20});
@@ -370,44 +391,42 @@ function spawnWall() {
             wallY = Math.floor(Math.random()*32)*20+1;
         } while (checkCollision(wallX,wallY) != "moveOn" || wallY == 321 || wallX >= 581);
 
-        canvasDraw.drawImage(images[0], wallX, wallY, 20, 20);
-        canvasDraw.drawImage(images[0], wallX+20, wallY, 20, 20);
-        canvasDraw.drawImage(images[0], wallX+40, wallY, 20, 20);
+        canvasDraw.drawImage(images.bricks, wallX, wallY, 20, 20);
+        canvasDraw.drawImage(images.bricks, wallX+20, wallY, 20, 20);
+        canvasDraw.drawImage(images.bricks, wallX+40, wallY, 20, 20);
 
         usedTiles.wall.push({x: wallX, y: wallY});
         usedTiles.wall.push({x: wallX+20, y: wallY});
         usedTiles.wall.push({x: wallX+40, y: wallY});
-    }
-}
+    };
+};
 
 function gameOver() {
-    clearInterval(gameSetup.snakeInt);
-    clearInterval(gameSetup.appleInt);
-    clearInterval(gameSetup.mineInt);
-    clearInterval(gameSetup.demineInt);
-    clearInterval(gameSetup.enemyInt);
+    Object.keys(gameSetup).forEach ((interval) => {
+        clearInterval(gameSetup[interval]);
+    });
     canvasDraw.fillStyle = "#eeeeee";
     canvasDraw.font = "40px Arial";
     canvasDraw.textAlign = "center";
     canvasDraw.fillText("Game Over!", 320, 320);
-}
+};
 
 //functions to process user input
 
 function setDifficulty(d) {
     gameSetup.difficulty = d;
-}
+};
 
 function toggleCustomSetup() {
     document.querySelector("#customwrapper").classList.toggle('show');
-}
+};
 
 function toggleSounds() {
-    sounds.forEach((sound) => {
-        if (sound.muted == true) {
-            sound.muted = false;
+    Object.keys(sounds).forEach((sound) => {
+        if (sounds[sound].muted == true) {
+            sounds[sound].muted = false;
         } else {
-            sound.muted = true;
+            sounds[sound].muted = true;
         };
     });
-}
+};
