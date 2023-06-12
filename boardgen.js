@@ -213,18 +213,6 @@ function moveSnake() {
         }
     }
 
-    //remove oldest snake tile if no apple is eaten this turn
-    if (checkCollision(snakeX,snakeY)[0] != "appleCollision") {
-        let snakeA = snakeTiles[snakeTiles.length - 1].x;
-        let snakeB = snakeTiles[snakeTiles.length - 1].y;
-        snake.fillStyle = "#3c3c3c";
-        snake.fillRect(snakeA, snakeB, 20, 20);
-        snakeTiles.pop();
-    } else {
-        appleTiles.splice(checkCollision(snakeX,snakeY)[1], 1);
-        sounds[0].play();
-    }
-
     //if tile targeted by current move is inhibited by an enemy, mine or snake - game over
     if (checkCollision(snakeX,snakeY) == "snakeCollision" || checkCollision(snakeX,snakeY) == "wallCollision") {
         sounds[2].play();
@@ -238,6 +226,18 @@ function moveSnake() {
         sounds[3].play();
         gameOver();
         return;
+    }
+
+    //remove oldest snake tile if no apple is eaten this turn
+    if (checkCollision(snakeX,snakeY)[0] != "appleCollision") {
+        let snakeA = snakeTiles[snakeTiles.length - 1].x;
+        let snakeB = snakeTiles[snakeTiles.length - 1].y;
+        snake.fillStyle = "#3c3c3c";
+        snake.fillRect(snakeA, snakeB, 20, 20);
+        snakeTiles.pop();
+    } else {
+        appleTiles.splice(checkCollision(snakeX,snakeY)[1], 1);
+        sounds[0].play();
     }
 
     //add new snake tile ahead
