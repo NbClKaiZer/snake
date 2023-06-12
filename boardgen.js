@@ -4,7 +4,7 @@
 - game over on enemy collision DONE
 - add solid, impassable walls (entire tiles for now, maybe 2px borders later) DONE
 - game over on wall collision DONE
-- add graphics for walls, apples, mines and 1-tile enemies
+- add graphics for walls, apples, mines and 1-tile enemies DONE
 - add enemy 4-tile snakes
 - make enemy snakes look for free tiles in movement direction
 - have enemy snakes die when no free tile is available for their next move
