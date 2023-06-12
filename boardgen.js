@@ -114,12 +114,12 @@ function startGame() {
     }
 
     //spawn initial nonplayer-objects
+    for (let k=0; k<gameSetup.wallAmount; k++) {
+        spawnWall();
+    }
     spawnApple();
     for (let j=0; j<gameSetup.enemyAmount; j++) {
         spawnEnemy();
-    }
-    for (let k=0; k<gameSetup.wallAmount; k++) {
-        spawnWall();
     }
 }
 
