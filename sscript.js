@@ -17,29 +17,6 @@
 const board = document.querySelector("#board");
 const canvasDraw = board.getContext("2d");
 
-const usedTiles = {
-    snake: [],
-    apple: [],
-    mine: [],
-    enemy: [],
-    wall: []
-};
-
-let direction = "left";
-let lastMove = "left";
-
-const gameSetup = {
-    difficulty: 2
-};
-
-const sounds = {
-    bleep: new Audio("./bleep.mp3"),
-    boom: new Audio("./boom.mp3"),
-    hurt: new Audio("./hurt.mp3"),
-    shoot: new Audio("./shoot.mp3")
-};
-sounds.bleep.volume = 0.5;
-
 const images = {
     bricks: new Image(),
     landmine: new Image(),
@@ -50,6 +27,29 @@ images.bricks.src = "./bricks.png";
 images.landmine.src = "./landmine.png";
 images.apple.src = "./apple.png";
 images.spider.src = "./spider.png";
+
+const sounds = {
+    bleep: new Audio("./bleep.mp3"),
+    boom: new Audio("./boom.mp3"),
+    hurt: new Audio("./hurt.mp3"),
+    shoot: new Audio("./shoot.mp3")
+};
+sounds.bleep.volume = 0.5;
+
+const gameSetup = {
+    difficulty: 2
+};
+
+const usedTiles = {
+    snake: [],
+    apple: [],
+    mine: [],
+    enemy: [],
+    wall: []
+};
+
+let lastMove = "left";
+let direction = "left";
 
 //board outer border
 canvasDraw.rect(0, 0, 642, 642);
