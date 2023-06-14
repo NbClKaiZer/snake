@@ -17,27 +17,11 @@
 const board = document.querySelector("#board");
 const canvasDraw = board.getContext("2d");
 
-const images = {
-    bricks: new Image(),
-    landmine: new Image(),
-    apple: new Image(),
-    spider: new Image()
-};
-images.bricks.src = "./bricks.png";
-images.landmine.src = "./landmine.png";
-images.apple.src = "./apple.png";
-images.spider.src = "./spider.png";
-
-const sounds = {
-    bleep: new Audio("./bleep.mp3"),
-    boom: new Audio("./boom.mp3"),
-    hurt: new Audio("./hurt.mp3"),
-    shoot: new Audio("./shoot.mp3")
-};
-sounds.bleep.volume = 0.5;
+import {images, sounds} from "./assets.js";
+import { checkCollision } from "./collision.js";
 
 const gameSetup = {
-    difficulty: 2
+    difficulty: "diff2"
 };
 
 const usedTiles = {
@@ -49,7 +33,7 @@ const usedTiles = {
 };
 
 let lastMove = "left";
-let direction = "left";
+let snakeDirection = "left";
 
 //board outer border
 canvasDraw.rect(0, 0, 642, 642);
@@ -57,6 +41,10 @@ canvasDraw.strokeStyle = "#bbbbbb";
 canvasDraw.stroke();
 canvasDraw.fillStyle= "#3c3c3c"
 canvasDraw.fillRect(1, 1, 640, 640);
+
+document.querySelector("#startbutton").addEventListener('click', () => {
+    startGame();
+});
 
 function startGame() {
     //reset tile arrays, intervals, move direction and board
@@ -82,19 +70,19 @@ function startGame() {
     };
     
     //initialize game setup
-    if (gameSetup.difficulty == 0) {
+    if (gameSetup.difficulty == "diff0") {
         gameSetup.snakeInt = setInterval(moveSnake, 250);
         gameSetup.appleInt = setInterval(spawnApple, 7500);
         gameSetup.maxMines = 0;
         gameSetup.wallAmount = 0;
-    } else if (gameSetup.difficulty == 1) {
+    } else if (gameSetup.difficulty == "diff1") {
         gameSetup.snakeInt = setInterval(moveSnake, 200);
         gameSetup.appleInt = setInterval(spawnApple, 6000);
         gameSetup.mineInt = setInterval(spawnMine, 10000);
         gameSetup.demineInt = setInterval(despawnMine, 12000);
         gameSetup.maxMines = 10;
         gameSetup.wallAmount = 5;
-    } else if  (gameSetup.difficulty == 2) {
+    } else if  (gameSetup.difficulty == "diff2") {
         gameSetup.snakeInt = setInterval(moveSnake, 150);
         gameSetup.appleInt = setInterval(spawnApple, 4500);
         gameSetup.mineInt = setInterval(spawnMine, 6000);
@@ -103,7 +91,7 @@ function startGame() {
         gameSetup.maxMines = 20;
         gameSetup.wallAmount = 10;
         gameSetup.enemyAmount = 1;
-    } else if  (gameSetup.difficulty == 3) {
+    } else if  (gameSetup.difficulty == "diff3") {
         gameSetup.snakeInt = setInterval(moveSnake, 100);
         gameSetup.appleInt = setInterval(spawnApple, 3000);
         gameSetup.mineInt = setInterval(spawnMine, 4500);
@@ -112,7 +100,7 @@ function startGame() {
         gameSetup.maxMines = 30;
         gameSetup.wallAmount = 20;
         gameSetup.enemyAmount = 3;
-    } else if  (gameSetup.difficulty == 4) {
+    } else if  (gameSetup.difficulty == "diff4") {
         gameSetup.snakeInt = setInterval(moveSnake, 75);
         gameSetup.appleInt = setInterval(spawnApple, 3000);
         gameSetup.mineInt = setInterval(spawnMine, 3000);
@@ -121,7 +109,7 @@ function startGame() {
         gameSetup.maxMines = 50;
         gameSetup.wallAmount = 30;
         gameSetup.enemyAmount = 5;
-    } else if (gameSetup.difficulty == 'custom') {
+    } else if (gameSetup.difficulty == "diffcustom") {
         document.querySelector("#customconfirm").classList.add('show');
         gameSetup.snakeInt = setInterval(moveSnake, document.querySelector("#snakeInt").value);
         gameSetup.appleInt = setInterval(spawnApple, document.querySelector("#appleInt").value);
@@ -205,29 +193,29 @@ function moveSnake() {
     };
 
     //if tile targeted by current move is inhibited by an enemy, mine or snake - game over
-    if (checkCollision(snakeX,snakeY) == "snakeCollision" || checkCollision(snakeX,snakeY) == "wallCollision") {
+    if (checkCollision(snakeX,snakeY,usedTiles) == "snakeCollision" || checkCollision(snakeX,snakeY,usedTiles) == "wallCollision") {
         sounds.hurt.play();
         gameOver();
         return;
-    } else if (checkCollision(snakeX,snakeY) == "mineCollision") {
+    } else if (checkCollision(snakeX,snakeY,usedTiles) == "mineCollision") {
         sounds.boom.play();
         gameOver();
         return;
-    } else if (checkCollision(snakeX,snakeY) == "enemyCollision") {
+    } else if (checkCollision(snakeX,snakeY,usedTiles) == "enemyCollision") {
         sounds.shoot.play();
         gameOver();
         return;
     };
 
     //remove oldest snake tile if no apple is eaten this turn
-    if (checkCollision(snakeX,snakeY)[0] != "appleCollision") {
+    if (checkCollision(snakeX,snakeY,usedTiles)[0] != "appleCollision") {
         let snakeA = usedTiles.snake[usedTiles.snake.length - 1].x;
         let snakeB = usedTiles.snake[usedTiles.snake.length - 1].y;
         canvasDraw.fillStyle = "#3c3c3c";
         canvasDraw.fillRect(snakeA, snakeB, 20, 20);
         usedTiles.snake.pop();
     } else {
-        usedTiles.apple.splice(checkCollision(snakeX,snakeY)[1], 1);
+        usedTiles.apple.splice(checkCollision(snakeX,snakeY,usedTiles)[1], 1);
         sounds.bleep.play();
     };
 
@@ -244,41 +232,41 @@ function spawnApple() {
     do {
         appleX = Math.floor(Math.random()*32)*20+1;
         appleY = Math.floor(Math.random()*32)*20+1;
-    } while (checkCollision(appleX,appleY) != "moveOn");
+    } while (checkCollision(appleX,appleY,usedTiles) != "moveOn");
 
     canvasDraw.drawImage(images.apple, appleX, appleY, 20, 20);
     usedTiles.apple.push({x: appleX, y: appleY});
 };
 
-function checkCollision(collX, collY) {
+/*function checkCollision(collX, collY, checkTiles) {
     let event = "moveOn";
 
-    usedTiles.snake.forEach((tile) => {
+    checkTiles.snake.forEach((tile) => {
         if (tile.x == collX && tile.y == collY) {
             event = "snakeCollision";
         };
     });
 
     //additionally returns index of found apple, so it can be easily removed from usedTiles.apple from within moveSnake()
-    usedTiles.apple.forEach((tile) => {
+    checkTiles.apple.forEach((tile) => {
         if (tile.x == collX && tile.y == collY) {
-            event = ["appleCollision", usedTiles.apple.indexOf(tile)];
+            event = ["appleCollision", checkTiles.apple.indexOf(tile)];
         };
     });
 
-    usedTiles.mine.forEach((tile) => {
+    checkTiles.mine.forEach((tile) => {
         if (tile.x == collX && tile.y == collY) {
             event = "mineCollision";
         };
     });
 
-    usedTiles.enemy.forEach((tile) => {
+    checkTiles.enemy.forEach((tile) => {
         if (tile.x == collX && tile.y == collY) {
             event = "enemyCollision";
         };
     });
 
-    usedTiles.wall.forEach((tile) => {
+    checkTiles.wall.forEach((tile) => {
         if (tile.x == collX && tile.y == collY) {
             event = "wallCollision";
         };
@@ -286,7 +274,7 @@ function checkCollision(collX, collY) {
 
     //returns the appropriate collision, if any was found, or "moveOn" if not
     return event;
-};
+};*/
 
 function spawnMine() {
     let mineX,mineY;
@@ -296,14 +284,14 @@ function spawnMine() {
         do {
             mineX = Math.floor(Math.random()*32)*20+1;
             mineY = Math.floor(Math.random()*32)*20+1;
-        } while (checkCollision(mineX,mineY) != "moveOn");
+        } while (checkCollision(mineX,mineY,usedTiles) != "moveOn");
         
         //prevent Mines from spawning less than 5 tiles ahead from snake head in recent moving direction
             //consider doing this within the do-while-loop to prevent skipping mine spawn
-        if((direction == "left" && mineY == usedTiles.snake[0].y && mineX > (usedTiles.snake[0].x - 100) && mineX < usedTiles.snake[0].x) ||
-        (direction == "right" && mineY == usedTiles.snake[0].y && mineX < (usedTiles.snake[0].x + 100) && mineX > usedTiles.snake[0].x) ||
-        (direction == "up" && mineX == usedTiles.snake[0].x && mineY > (usedTiles.snake[0].y - 100) && mineY < usedTiles.snake[0].y) ||
-        (direction == "down" && mineX == usedTiles.snake[0].x && mineY < (usedTiles.snake[0].y + 100) && mineY > usedTiles.snake[0].y)) {
+        if((snakeDirection == "left" && mineY == usedTiles.snake[0].y && mineX > (usedTiles.snake[0].x - 100) && mineX < usedTiles.snake[0].x) ||
+        (snakeDirection == "right" && mineY == usedTiles.snake[0].y && mineX < (usedTiles.snake[0].x + 100) && mineX > usedTiles.snake[0].x) ||
+        (snakeDirection == "up" && mineX == usedTiles.snake[0].x && mineY > (usedTiles.snake[0].y - 100) && mineY < usedTiles.snake[0].y) ||
+        (snakeDirection == "down" && mineX == usedTiles.snake[0].x && mineY < (usedTiles.snake[0].y + 100) && mineY > usedTiles.snake[0].y)) {
             return;
         };
 
@@ -327,7 +315,7 @@ function spawnEnemy() {
     do {
         enemyX = Math.floor(Math.random()*32)*20+1;
         enemyY = Math.floor(Math.random()*32)*20+1;
-    } while (checkCollision(enemyX,enemyY) != "moveOn" || enemyY == 321);
+    } while (checkCollision(enemyX,enemyY,usedTiles) != "moveOn" || enemyY == 321);
     
     canvasDraw.drawImage(images.spider, enemyX, enemyY, 20, 20);
     usedTiles.enemy.push({x: enemyX, y: enemyY});
@@ -342,19 +330,19 @@ function moveEnemy() {
         let enemyMoved = false;
 
         //50% chance to move, on move have equal chance to move in any of the 4 directions, only move if no collision, not allowed to warp to opposite side
-        if (enemyDirection==0 && checkCollision(enemyX-20,enemyY) == "moveOn" && enemyX>1) {
+        if (enemyDirection==0 && checkCollision(enemyX-20,enemyY,usedTiles) == "moveOn" && enemyX>1) {
             canvasDraw.drawImage(images.spider, enemyX-20, enemyY, 20, 20);
             tango.x = enemyX-20;
             enemyMoved = true;
-        } else if (enemyDirection==1 && checkCollision(enemyX+20,enemyY) == "moveOn" && enemyX<621) {
+        } else if (enemyDirection==1 && checkCollision(enemyX+20,enemyY,usedTiles) == "moveOn" && enemyX<621) {
             canvasDraw.drawImage(images.spider, enemyX+20, enemyY, 20, 20);
             tango.x = enemyX+20;
             enemyMoved = true;
-        } else if (enemyDirection==2 && checkCollision(enemyX,enemyY-20) == "moveOn" && enemyY>1) {
+        } else if (enemyDirection==2 && checkCollision(enemyX,enemyY-20,usedTiles) == "moveOn" && enemyY>1) {
             canvasDraw.drawImage(images.spider, enemyX, enemyY-20, 20, 20);
             tango.y = enemyY-20;
             enemyMoved = true;
-        } else if (enemyDirection==3 && checkCollision(enemyX,enemyY+20) == "moveOn" && enemyY<621) {
+        } else if (enemyDirection==3 && checkCollision(enemyX,enemyY+20,usedTiles) == "moveOn" && enemyY<621) {
             canvasDraw.drawImage(images.spider, enemyX, enemyY+20, 20, 20);
             tango.y = enemyY+20;
             enemyMoved = true;
@@ -376,7 +364,7 @@ function spawnWall() {
         do {
             wallX = Math.floor(Math.random()*32)*20+1;
             wallY = Math.floor(Math.random()*32)*20+1;
-        } while (checkCollision(wallX,wallY) != "moveOn" || (wallY >= 281 && wallY <= 321) || wallY >= 581);
+        } while (checkCollision(wallX,wallY,usedTiles) != "moveOn" || (wallY >= 281 && wallY <= 321) || wallY >= 581);
 
         canvasDraw.drawImage(images.bricks, wallX, wallY, 20, 20);
         canvasDraw.drawImage(images.bricks, wallX, wallY+20, 20, 20);
@@ -389,7 +377,7 @@ function spawnWall() {
         do {
             wallX = Math.floor(Math.random()*32)*20+1;
             wallY = Math.floor(Math.random()*32)*20+1;
-        } while (checkCollision(wallX,wallY) != "moveOn" || wallY == 321 || wallX >= 581);
+        } while (checkCollision(wallX,wallY,usedTiles) != "moveOn" || wallY == 321 || wallX >= 581);
 
         canvasDraw.drawImage(images.bricks, wallX, wallY, 20, 20);
         canvasDraw.drawImage(images.bricks, wallX+20, wallY, 20, 20);
@@ -412,16 +400,18 @@ function gameOver() {
 };
 
 //functions to process user input
+const diffBtns = document.querySelectorAll(".diffbutton")
+diffBtns.forEach ((btn) => {
+    btn.addEventListener('click', () => {
+        gameSetup.difficulty = btn.id;
+    });
+});
 
-function setDifficulty(d) {
-    gameSetup.difficulty = d;
-};
-
-function toggleCustomSetup() {
+document.querySelector("#customtoggle").addEventListener('click', () => {
     document.querySelector("#customwrapper").classList.toggle('show');
-};
+});
 
-function toggleSounds() {
+document.querySelector("#soundtoggle").addEventListener('click', () => {
     Object.keys(sounds).forEach((sound) => {
         if (sounds[sound].muted == true) {
             sounds[sound].muted = false;
@@ -429,4 +419,4 @@ function toggleSounds() {
             sounds[sound].muted = true;
         };
     });
-};
+});
