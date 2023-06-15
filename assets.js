@@ -1,8 +1,8 @@
 const images = {
-    bricks: new Image(),
-    landmine: new Image(),
-    apple: new Image(),
-    spider: new Image()
+    "bricks": new Image(),
+    "landmine": new Image(),
+    "apple": new Image(),
+    "spider": new Image()
 };
 images.bricks.src = "./bricks.png";
 images.landmine.src = "./landmine.png";
