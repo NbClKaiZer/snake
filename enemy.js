@@ -1,6 +1,6 @@
-import { gameCanvas } from "./sscript.js";
 import { checkCollision } from "./collision.js";
 import { drawItem } from "./canvasdraw.js";
+import { gameCanvas } from "./sscript.js";
 
 export function spawnEnemy(usedTiles) {
     let enemyX, enemyY;
@@ -11,7 +11,7 @@ export function spawnEnemy(usedTiles) {
         enemyY = Math.floor(Math.random()*32)*20+1;
     } while (checkCollision(enemyX,enemyY,usedTiles) != "moveOn" || enemyY == 321);
     
-    drawItem(gameCanvas, enemyX, enemyY, "spider");
+    drawItem(enemyX, enemyY, "spider");
     usedTiles.enemy.push({x: enemyX, y: enemyY});
 };
 
@@ -25,19 +25,19 @@ export function moveEnemy(usedTiles) {
 
         //50% chance to move, on move have equal chance to move in any of the 4 directions, only move if no collision, not allowed to warp to opposite side
         if (enemyDirection==0 && checkCollision(enemyX-20,enemyY,usedTiles) == "moveOn" && enemyX>1) {
-            drawItem(gameCanvas, enemyX-20, enemyY, "spider");
+            drawItem(enemyX-20, enemyY, "spider");
             tango.x = enemyX-20;
             enemyMoved = true;
         } else if (enemyDirection==1 && checkCollision(enemyX+20,enemyY,usedTiles) == "moveOn" && enemyX<621) {
-            drawItem(gameCanvas, enemyX+20, enemyY, "spider");
+            drawItem(enemyX+20, enemyY, "spider");
             tango.x = enemyX+20;
             enemyMoved = true;
         } else if (enemyDirection==2 && checkCollision(enemyX,enemyY-20,usedTiles) == "moveOn" && enemyY>1) {
-            drawItem(gameCanvas, enemyX, enemyY-20, "spider");
+            drawItem(enemyX, enemyY-20, "spider");
             tango.y = enemyY-20;
             enemyMoved = true;
         } else if (enemyDirection==3 && checkCollision(enemyX,enemyY+20,usedTiles) == "moveOn" && enemyY<621) {
-            drawItem(gameCanvas, enemyX, enemyY+20, "spider");
+            drawItem(enemyX, enemyY+20, "spider");
             tango.y = enemyY+20;
             enemyMoved = true;
         };

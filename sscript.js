@@ -22,8 +22,9 @@ import { spawnApple } from "./apple.js";
 import { spawnMine, despawnMine } from "./mines.js";
 import { spawnWall } from "./walls.js";
 import { spawnEnemy, moveEnemy } from "./enemy.js";
-import { moveSnake, lastMove } from "./movesnake.js";
-import { gameSetup } from "./userinput.js";
+import { moveSnake } from "./movesnake.js";
+import { setupInput } from "./userinput.js";
+import { setupControls } from "./controls.js";
 
 const usedTiles = {
     snake: [],
@@ -33,9 +34,20 @@ const usedTiles = {
     wall: []
 };
 
-drawBoard(gameCanvas);
+const gameSetup = {
+    difficulty: "diff2"
+};
 
-export function startGame(snakeDirection) {
+const movement = {
+    lastMove: "left",
+    snakeDirection: "left"
+}
+
+setupInput(gameSetup, startGame);
+setupControls(movement);
+drawBoard();
+
+function startGame() {
     //reset tile arrays, intervals, move direction and board
     Object.keys(usedTiles).forEach((tileCat) => {
         usedTiles[tileCat] = [];
@@ -43,51 +55,51 @@ export function startGame(snakeDirection) {
     Object.keys(gameSetup).forEach ((interval) => {
         clearInterval(gameSetup[interval]);
     });
-    snakeDirection = "left";
-    drawBoard(gameCanvas);
+    movement.snakeDirection = "left";
+    drawBoard();
     document.querySelector("#customconfirm").classList.remove('show');
     
     //initial snake figure generation
     for (let i=0; i<=3; i++) {
-        drawSnake(gameCanvas, 321 + i * 20, 321);
+        drawSnake(321 + i * 20, 321);
         usedTiles.snake.push({x: 321 + i * 20, y: 321});
     };
     
     //initialize game setup
     if (gameSetup.difficulty == "diff0") {
-        gameSetup.snakeInt = setInterval(moveSnake, 250, usedTiles, gameSetup, gameCanvas, lastMove);
+        gameSetup.snakeInt = setInterval(moveSnake, 250, usedTiles, gameSetup, movement);
         gameSetup.appleInt = setInterval(spawnApple, 7500, usedTiles);
         gameSetup.maxMines = 0;
         gameSetup.wallAmount = 0;
     } else if (gameSetup.difficulty == "diff1") {
-        gameSetup.snakeInt = setInterval(moveSnake, 200, usedTiles, gameSetup, gameCanvas, lastMove);
+        gameSetup.snakeInt = setInterval(moveSnake, 200, usedTiles, gameSetup, movement);
         gameSetup.appleInt = setInterval(spawnApple, 6000, usedTiles);
-        gameSetup.mineInt = setInterval(spawnMine, 10000, usedTiles, snakeDirection);
+        gameSetup.mineInt = setInterval(spawnMine, 10000, usedTiles, gameSetup, movement);
         gameSetup.demineInt = setInterval(despawnMine, 12000, usedTiles);
         gameSetup.maxMines = 10;
         gameSetup.wallAmount = 5;
     } else if  (gameSetup.difficulty == "diff2") {
-        gameSetup.snakeInt = setInterval(moveSnake, 150, usedTiles, gameSetup, gameCanvas, lastMove);
+        gameSetup.snakeInt = setInterval(moveSnake, 150, usedTiles, gameSetup, movement);
         gameSetup.appleInt = setInterval(spawnApple, 4500, usedTiles);
-        gameSetup.mineInt = setInterval(spawnMine, 6000, usedTiles, snakeDirection);
+        gameSetup.mineInt = setInterval(spawnMine, 6000, usedTiles, gameSetup, movement);
         gameSetup.demineInt = setInterval(despawnMine, 12000, usedTiles);
         gameSetup.enemyInt = setInterval(moveEnemy, 500, usedTiles);
         gameSetup.maxMines = 20;
         gameSetup.wallAmount = 10;
         gameSetup.enemyAmount = 1;
     } else if  (gameSetup.difficulty == "diff3") {
-        gameSetup.snakeInt = setInterval(moveSnake, 100, usedTiles, gameSetup, gameCanvas, lastMove);
+        gameSetup.snakeInt = setInterval(moveSnake, 100, usedTiles, gameSetup, movement);
         gameSetup.appleInt = setInterval(spawnApple, 3000, usedTiles);
-        gameSetup.mineInt = setInterval(spawnMine, 4500, usedTiles, snakeDirection);
+        gameSetup.mineInt = setInterval(spawnMine, 4500, usedTiles, gameSetup, movement);
         gameSetup.demineInt = setInterval(despawnMine, 12000, usedTiles);
         gameSetup.enemyInt = setInterval(moveEnemy, 300, usedTiles);
         gameSetup.maxMines = 30;
         gameSetup.wallAmount = 20;
         gameSetup.enemyAmount = 3;
     } else if  (gameSetup.difficulty == "diff4") {
-        gameSetup.snakeInt = setInterval(moveSnake, 75, usedTiles, gameSetup, gameCanvas, lastMove);
+        gameSetup.snakeInt = setInterval(moveSnake, 75, usedTiles, gameSetup, movement);
         gameSetup.appleInt = setInterval(spawnApple, 3000, usedTiles);
-        gameSetup.mineInt = setInterval(spawnMine, 3000, usedTiles, snakeDirection);
+        gameSetup.mineInt = setInterval(spawnMine, 3000, usedTiles, gameSetup, movement);
         gameSetup.demineInt = setInterval(despawnMine, 15000, usedTiles);
         gameSetup.enemyInt = setInterval(moveEnemy, 100, usedTiles);
         gameSetup.maxMines = 50;
@@ -95,9 +107,9 @@ export function startGame(snakeDirection) {
         gameSetup.enemyAmount = 5;
     } else if (gameSetup.difficulty == "diffcustom") {
         document.querySelector("#customconfirm").classList.add('show');
-        gameSetup.snakeInt = setInterval(moveSnake, document.querySelector("#snakeInt").value, usedTiles, gameSetup, gameCanvas);
+        gameSetup.snakeInt = setInterval(moveSnake, document.querySelector("#snakeInt").value, usedTiles, gameSetup, movement);
         gameSetup.appleInt = setInterval(spawnApple, document.querySelector("#appleInt").value, usedTiles);
-        gameSetup.mineInt = setInterval(spawnMine, document.querySelector("#mineInt").value, usedTiles, snakeDirection);
+        gameSetup.mineInt = setInterval(spawnMine, document.querySelector("#mineInt").value, usedTiles, gameSetup, movement);
         gameSetup.demineInt = setInterval(despawnMine, document.querySelector("#demineInt").value, usedTiles);
         gameSetup.enemyInt = setInterval(moveEnemy, document.querySelector("#enemyInt").value, usedTiles);
         gameSetup.maxMines = document.querySelector("#maxMines").value;

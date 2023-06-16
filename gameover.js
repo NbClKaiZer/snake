@@ -1,9 +1,11 @@
-export function gameOver(gameSetup, canvas) {
+import { gameCanvas } from "./sscript.js";
+
+export function gameOver(gameSetup) {
     Object.keys(gameSetup).forEach ((interval) => {
         clearInterval(gameSetup[interval]);
     });
-    canvas.fillStyle = "#eeeeee";
-    canvas.font = "40px Arial";
-    canvas.textAlign = "center";
-    canvas.fillText("Game Over!", 320, 320);
+    gameCanvas.fillStyle = "#eeeeee";
+    gameCanvas.font = "40px Arial";
+    gameCanvas.textAlign = "center";
+    gameCanvas.fillText("Game Over!", 320, 320);
 };

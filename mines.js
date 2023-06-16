@@ -1,9 +1,8 @@
 import { checkCollision } from "./collision.js";
-import { drawItem } from "./canvasdraw.js";
 import { gameCanvas } from "./sscript.js";
-import { gameSetup } from "./userinput.js";
+import { drawItem } from "./canvasdraw.js";
 
-export function spawnMine(usedTiles, preventionDirection) {
+export function spawnMine(usedTiles, gameSetup, movement) {
     let mineX,mineY;
 
     if (usedTiles.mine.length < gameSetup.maxMines) {
@@ -15,14 +14,14 @@ export function spawnMine(usedTiles, preventionDirection) {
         
         //prevent Mines from spawning less than 5 tiles ahead from snake head in recent moving direction
             //consider doing this within the do-while-loop to prevent skipping mine spawn
-        if((preventionDirection == "left" && mineY == usedTiles.snake[0].y && mineX > (usedTiles.snake[0].x - 100) && mineX < usedTiles.snake[0].x) ||
-        (preventionDirection == "right" && mineY == usedTiles.snake[0].y && mineX < (usedTiles.snake[0].x + 100) && mineX > usedTiles.snake[0].x) ||
-        (preventionDirection == "up" && mineX == usedTiles.snake[0].x && mineY > (usedTiles.snake[0].y - 100) && mineY < usedTiles.snake[0].y) ||
-        (preventionDirection == "down" && mineX == usedTiles.snake[0].x && mineY < (usedTiles.snake[0].y + 100) && mineY > usedTiles.snake[0].y)) {
+        if((movement.snakeDirection == "left" && mineY == usedTiles.snake[0].y && mineX > (usedTiles.snake[0].x - 100) && mineX < usedTiles.snake[0].x) ||
+        (movement.snakeDirection == "right" && mineY == usedTiles.snake[0].y && mineX < (usedTiles.snake[0].x + 100) && mineX > usedTiles.snake[0].x) ||
+        (movement.snakeDirection == "up" && mineX == usedTiles.snake[0].x && mineY > (usedTiles.snake[0].y - 100) && mineY < usedTiles.snake[0].y) ||
+        (movement.snakeDirection == "down" && mineX == usedTiles.snake[0].x && mineY < (usedTiles.snake[0].y + 100) && mineY > usedTiles.snake[0].y)) {
             return;
         };
 
-        drawItem(gameCanvas, mineX, mineY, "landmine");
+        drawItem(mineX, mineY, "landmine");
         usedTiles.mine.push({x: mineX, y: mineY});
     };
 };

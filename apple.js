@@ -16,6 +16,6 @@ export function spawnApple(usedTiles) {
         appleY = Math.floor(Math.random()*32)*20+1;
     } while (checkCollision(appleX,appleY,usedTiles) != "moveOn");
 
-    drawItem(gameCanvas, appleX, appleY, "apple");
+    drawItem(appleX, appleY, "apple");
     usedTiles.apple.push({x: appleX, y: appleY});
 };
