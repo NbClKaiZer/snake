@@ -27,24 +27,36 @@ import { setupInput } from "./userinput.js";
 import { setupControls } from "./controls.js";
 
 const usedTiles = {
-    snake: [],
     apple: [],
     mine: [],
     enemy: [],
-    wall: []
+    wall: [],
+};
+
+class Snake {
+    constructor(color, initSize) {
+        this.color = color;
+        this.initSize = initSize;
+        this.lastMove = "left";
+        this.direction = "left";
+    };
 };
 
 const gameSetup = {
     difficulty: "diff2"
 };
 
-const movement = {
-    lastMove: "left",
-    snakeDirection: "left"
-}
+const player = new Snake("#2aa4cd", 4);
+usedTiles.player = [];
+/*const red = new Snake("#a1232b", 4);
+usedTiles.red = [];
+const yellow = new Snake("#ffff00", 4);
+usedTiles.yellow = [];
+const green = new Snake("#00ff00", 4);
+usedTiles.green = [];*/
 
 setupInput(gameSetup, startGame);
-setupControls(movement);
+setupControls(player);
 drawBoard();
 
 function startGame() {
@@ -55,51 +67,64 @@ function startGame() {
     Object.keys(gameSetup).forEach ((interval) => {
         clearInterval(gameSetup[interval]);
     });
-    movement.snakeDirection = "left";
+
     drawBoard();
     document.querySelector("#customconfirm").classList.remove('show');
     
+    player.direction = "left";
     //initial snake figure generation
-    for (let i=0; i<=3; i++) {
-        drawSnake(321 + i * 20, 321);
-        usedTiles.snake.push({x: 321 + i * 20, y: 321});
+    for (let i=0; i<player.initSize; i++) {
+        drawSnake(player, 321 + i * 20, 321);
+        usedTiles.player.push({x: 321 + i * 20, y: 321});
     };
+    /*for (let r=0; r<red.initSize; r++) {
+        drawSnake(red, 121 + r * 20, 481);
+        usedTiles.red.push({x: 121 + r * 20, y: 481});
+    };
+    for (let y=0; y<yellow.initSize; y++) {
+        drawSnake(yellow, 561 + y * 20, 241);
+        usedTiles.yellow.push({x: 561 + y * 20, y: 241});
+    };
+    for (let g=0; g<green.initSize; g++) {
+        drawSnake(green, 81 + g * 20, 41);
+        usedTiles.green.push({x: 81 + g * 20, y: 41});
+    };*/
     
     //initialize game setup
     if (gameSetup.difficulty == "diff0") {
-        gameSetup.snakeInt = setInterval(moveSnake, 250, usedTiles, gameSetup, movement);
+        gameSetup.snakeInt = setInterval(moveSnake, 250, usedTiles, gameSetup, player);
         gameSetup.appleInt = setInterval(spawnApple, 7500, usedTiles);
         gameSetup.maxMines = 0;
         gameSetup.wallAmount = 0;
     } else if (gameSetup.difficulty == "diff1") {
-        gameSetup.snakeInt = setInterval(moveSnake, 200, usedTiles, gameSetup, movement);
+        gameSetup.snakeInt = setInterval(moveSnake, 200, usedTiles, gameSetup, player);
         gameSetup.appleInt = setInterval(spawnApple, 6000, usedTiles);
-        gameSetup.mineInt = setInterval(spawnMine, 10000, usedTiles, gameSetup, movement);
+        gameSetup.mineInt = setInterval(spawnMine, 10000, usedTiles, gameSetup, player);
         gameSetup.demineInt = setInterval(despawnMine, 12000, usedTiles);
         gameSetup.maxMines = 10;
         gameSetup.wallAmount = 5;
     } else if  (gameSetup.difficulty == "diff2") {
-        gameSetup.snakeInt = setInterval(moveSnake, 150, usedTiles, gameSetup, movement);
+        gameSetup.snakeInt = setInterval(moveSnake, 150, usedTiles, gameSetup, player);
         gameSetup.appleInt = setInterval(spawnApple, 4500, usedTiles);
-        gameSetup.mineInt = setInterval(spawnMine, 6000, usedTiles, gameSetup, movement);
+        gameSetup.mineInt = setInterval(spawnMine, 6000, usedTiles, gameSetup, player);
         gameSetup.demineInt = setInterval(despawnMine, 12000, usedTiles);
         gameSetup.enemyInt = setInterval(moveEnemy, 500, usedTiles);
         gameSetup.maxMines = 20;
         gameSetup.wallAmount = 10;
         gameSetup.enemyAmount = 1;
     } else if  (gameSetup.difficulty == "diff3") {
-        gameSetup.snakeInt = setInterval(moveSnake, 100, usedTiles, gameSetup, movement);
+        gameSetup.snakeInt = setInterval(moveSnake, 100, usedTiles, gameSetup, player);
         gameSetup.appleInt = setInterval(spawnApple, 3000, usedTiles);
-        gameSetup.mineInt = setInterval(spawnMine, 4500, usedTiles, gameSetup, movement);
+        gameSetup.mineInt = setInterval(spawnMine, 4500, usedTiles, gameSetup, player);
         gameSetup.demineInt = setInterval(despawnMine, 12000, usedTiles);
         gameSetup.enemyInt = setInterval(moveEnemy, 300, usedTiles);
         gameSetup.maxMines = 30;
         gameSetup.wallAmount = 20;
         gameSetup.enemyAmount = 3;
     } else if  (gameSetup.difficulty == "diff4") {
-        gameSetup.snakeInt = setInterval(moveSnake, 75, usedTiles, gameSetup, movement);
+        gameSetup.snakeInt = setInterval(moveSnake, 75, usedTiles, gameSetup, player);
         gameSetup.appleInt = setInterval(spawnApple, 3000, usedTiles);
-        gameSetup.mineInt = setInterval(spawnMine, 3000, usedTiles, gameSetup, movement);
+        gameSetup.mineInt = setInterval(spawnMine, 3000, usedTiles, gameSetup, player);
         gameSetup.demineInt = setInterval(despawnMine, 15000, usedTiles);
         gameSetup.enemyInt = setInterval(moveEnemy, 100, usedTiles);
         gameSetup.maxMines = 50;
@@ -107,9 +132,9 @@ function startGame() {
         gameSetup.enemyAmount = 5;
     } else if (gameSetup.difficulty == "diffcustom") {
         document.querySelector("#customconfirm").classList.add('show');
-        gameSetup.snakeInt = setInterval(moveSnake, document.querySelector("#snakeInt").value, usedTiles, gameSetup, movement);
+        gameSetup.snakeInt = setInterval(moveSnake, document.querySelector("#snakeInt").value, usedTiles, gameSetup, player);
         gameSetup.appleInt = setInterval(spawnApple, document.querySelector("#appleInt").value, usedTiles);
-        gameSetup.mineInt = setInterval(spawnMine, document.querySelector("#mineInt").value, usedTiles, gameSetup, movement);
+        gameSetup.mineInt = setInterval(spawnMine, document.querySelector("#mineInt").value, usedTiles, gameSetup, player);
         gameSetup.demineInt = setInterval(despawnMine, document.querySelector("#demineInt").value, usedTiles);
         gameSetup.enemyInt = setInterval(moveEnemy, document.querySelector("#enemyInt").value, usedTiles);
         gameSetup.maxMines = document.querySelector("#maxMines").value;

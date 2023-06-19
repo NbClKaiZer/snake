@@ -1,29 +1,29 @@
 //basic controls w,a,s,d and arrow keys, checks for and blocks 180° turns
-export function setupControls(movement) {
+export function setupControls(thisSnake) {
     document.addEventListener("keydown", (pressed) => {
         switch (pressed.key) {
             case "ArrowLeft":
             case "a":
-                if(movement.lastMove != "right") {
-                    movement.snakeDirection = "left";
+                if(thisSnake.lastMove != "right") {
+                    thisSnake.direction = "left";
                 };
                 break;
             case "ArrowRight":
             case "d":
-                if(movement.lastMove != "left") {
-                    movement.snakeDirection = "right";
+                if(thisSnake.lastMove != "left") {
+                    thisSnake.direction = "right";
                 };
                 break;
             case "ArrowUp":
             case "w":
-                if(movement.lastMove != "down") {
-                    movement.snakeDirection = "up";
+                if(thisSnake.lastMove != "down") {
+                    thisSnake.direction = "up";
                 };
                 break;
             case "ArrowDown":
             case "s":
-                if(movement.lastMove != "up") {
-                    movement.snakeDirection = "down";
+                if(thisSnake.lastMove != "up") {
+                    thisSnake.direction = "down";
                 };
                 break;
         };

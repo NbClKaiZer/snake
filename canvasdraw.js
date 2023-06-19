@@ -13,8 +13,8 @@ function drawItem(itemX, itemY, type) {
     gameCanvas.drawImage(images[type], itemX, itemY, 20, 20);
 };
 
-function drawSnake(snakeX, snakeY) {
-    gameCanvas.fillStyle = "#2aa4cd";
+function drawSnake(snake, snakeX, snakeY) {
+    gameCanvas.fillStyle = snake.color;
     gameCanvas.fillRect(snakeX, snakeY, 20, 20);
 };
 

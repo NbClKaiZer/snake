@@ -1,11 +1,26 @@
 export function checkCollision(collX, collY, checkTiles) {
     let event = "moveOn";
 
-    checkTiles.snake.forEach((tile) => {
+    checkTiles.player.forEach((tile) => {
         if (tile.x == collX && tile.y == collY) {
             event = "snakeCollision";
         };
     });
+    /*checkTiles.red.forEach((tile) => {
+        if (tile.x == collX && tile.y == collY) {
+            event = "snakeCollision";
+        };
+    });
+    checkTiles.yellow.forEach((tile) => {
+        if (tile.x == collX && tile.y == collY) {
+            event = "snakeCollision";
+        };
+    });
+    checkTiles.green.forEach((tile) => {
+        if (tile.x == collX && tile.y == collY) {
+            event = "snakeCollision";
+        };
+    });*/
 
     //additionally returns index of found apple, so it can be easily removed from usedTiles.apple from within moveSnake()
     checkTiles.apple.forEach((tile) => {
