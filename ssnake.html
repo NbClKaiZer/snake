@@ -14,14 +14,14 @@
                 <h2>A remake of the classic acard game</h2>
                 <p>Use W, A, S, D or arrow keys. Click start button to start or restart game.</p>
                 <div id="diffwrapper">
-                    <button onclick="setDifficulty(0)" class="button">Sandbox</button>
-                    <button onclick="setDifficulty(1)" class="button">Easy</button>
-                    <button onclick="setDifficulty(2)" class="button">Normal</button>
-                    <button onclick="setDifficulty(3)" class="button">Hard</button>
-                    <button onclick="setDifficulty(4)" class="button">Insane</button>
+                    <button id="diff0" class="button diffbutton">Sandbox</button>
+                    <button id="diff1" class="button diffbutton">Easy</button>
+                    <button id="diff2" class="button diffbutton">Normal</button>
+                    <button id="diff3" class="button diffbutton">Hard</button>
+                    <button id="diff4" class="button diffbutton">Insane</button>
                 </div>
                 <div id="diffwrapper">
-                    <button onclick="toggleCustomSetup()" class="button">Custom</button>
+                    <button id="customtoggle" class="button">Custom</button>
                 </div>
                 <div id="customwrapper">
                     <form id="customsetupform" method="post">
@@ -56,13 +56,13 @@
                             <p class="tooltip">0 - 50 (3-tile)</p>
                         </div>
                     </form>
-                    <button onclick="setDifficulty('custom')" class="button">Apply</button>
+                    <button id="diffcustom" class="button diffbutton">Apply</button>
                 </div>
                 <p id="customconfirm">Applying custom values.</p>
             </div>
             <div id="canvaswrapper">
                 <div id="audiowrapper">
-                    <button onclick="toggleSounds()" class="button">Toggle Sounds</button>
+                    <button id="soundtoggle" class="button">Toggle Sounds</button>
                     <div id="musicwrapper">
                         <p>Music:</p>
                         <audio controls id="background-music">
@@ -72,9 +72,9 @@
                     </div>
                 </div>
                 <canvas id="board" width="642" height="642"></canvas>
-                <button onclick="startGame()" class="button" id="startbutton">Start Game</button>
+                <button class="button" id="startbutton">Start Game</button>
             </div>
         </main>
-        <script src="sscript.js"></script>
+        <script src="sscript.js" type="module"></script>
     </body>
 </html>
